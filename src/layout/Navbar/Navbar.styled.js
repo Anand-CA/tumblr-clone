@@ -1,34 +1,34 @@
 import styled from "styled-components";
 export const Wrapper = styled.div``;
 export const Container = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 0 auto;
-  padding: 0.5rem 0.7em;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin: 0 auto;
+	padding: 0.5rem 0.7em;
 `;
 export const Left = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+	display: flex;
+	align-items: center;
+	gap: 1rem;
 `;
 export const Logo = styled.img`
-  height: 2.4rem;
-  width: 2.4rem;
-  object-fit: contain;
+	height: 2.4rem;
+	width: 2.4rem;
+	object-fit: contain;
 `;
 export const Right = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+	display: flex;
+	align-items: center;
+	gap: 1rem;
 
-  img {
-    cursor: pointer;
-    user-select: none;
-    height: 25px;
+	img {
+		cursor: pointer;
+		user-select: none;
+		height: 25px;
 
-    &:active {
-      transform: scale(0.9);
-    }
-  }
+		&:active {
+			transform: scale(0.9);
+		}
+	}
 `;

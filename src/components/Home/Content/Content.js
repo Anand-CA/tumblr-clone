@@ -5,23 +5,23 @@ import Blogs from "./Blogs";
 import Post from "./Post";
 
 function Content() {
-  return (
-    <Container>
-      <Left>
-        <PostHeader />
+	return (
+		<Container>
+			<Left>
+				<PostHeader />
 
-        <Post />
-        <Post />
-        <Post />
-        <Post />
-        <Post />
-      </Left>
-      <Right>
-        <Blogs />
-        {/* <Radar />
+				<Post />
+				<Post />
+				<Post />
+				<Post />
+				<Post />
+			</Left>
+			<Right>
+				<Blogs />
+				{/* <Radar />
         <Sponsored /> */}
-      </Right>
-    </Container>
-  );
+			</Right>
+		</Container>
+	);
 }
 export default Content;
