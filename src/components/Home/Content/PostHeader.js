@@ -1,13 +1,15 @@
 import { Avatar, Modal } from "@nextui-org/react";
 import Image from "next/image";
 import styled from "styled-components";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Photo from "../../../layout/Modal/Photo";
-import Post from "../../../layout/Toast/Post";
+import Post from "../../../layout/Toast";
+import Toast from "../../../layout/Toast";
 
 function PostHeader() {
   const icons = ["text", "photo", "quote", "link", "chat", "video", "audio"];
   const [visible, setVisible] = useState(false);
+  const [notiShow, setNotiShow] = useState(false);
   const [active, setActive] = useState("");
 
   const openModal = (i) => {
@@ -18,9 +20,23 @@ function PostHeader() {
     setVisible(false);
   };
 
+  const openNoti = () => {
+    setNotiShow(true);
+  };
+
+  useEffect(() => {
+    if (notiShow) {
+      setTimeout(() => {
+        setNotiShow(false);
+      }, 3000);
+    }
+  }, [notiShow]);
+
   return (
     <>
-      {/* <Post /> */}
+      <Toast show={notiShow} setShow={setNotiShow} type="success">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero, delenit
+      </Toast>
       <Modal
         aria-labelledby="modal-title"
         open={visible}
@@ -31,7 +47,7 @@ function PostHeader() {
           background: "transparent",
         }}
       >
-        <Photo closeModal={closeModal} />
+        <Photo closeModal={closeModal} openNoti={openNoti} />
       </Modal>
       {/* ---------------------------------------------------- */}
       <Wrapper>

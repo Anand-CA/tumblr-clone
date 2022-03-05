@@ -3,7 +3,7 @@ import React from "react";
 import { FiSettings } from "react-icons/fi";
 import styled from "styled-components";
 
-function Photo({ closeModal }) {
+function Photo({ closeModal, openNoti }) {
   return (
     <Container>
       <Left>
@@ -46,6 +46,10 @@ function Photo({ closeModal }) {
               background: "#00b8ff",
             }}
             size="sm"
+            onClick={() => {
+              openNoti();
+              closeModal();
+            }}
           >
             Post
           </Button>
