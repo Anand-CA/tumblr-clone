@@ -1,9 +1,6 @@
+import { Input } from "@nextui-org/react";
 import React from "react";
 import { Container, Left, Logo, Right, Wrapper } from "./Navbar.styled";
-import { AiFillHome } from "react-icons/ai";
-import { MdOutlineExplore, MdOutlineMailOutline } from "react-icons/md";
-import { BsEmojiSunglassesFill } from "react-icons/bs";
-import { Input } from "@nextui-org/react";
 
 const Navbar = () => {
   return (
@@ -15,10 +12,10 @@ const Navbar = () => {
         </Left>
 
         <Right>
-          <AiFillHome fontSize="2rem" />
-          <MdOutlineExplore fontSize="2rem" />
-          <MdOutlineMailOutline fontSize="2rem" />
-          <BsEmojiSunglassesFill fontSize="1.7rem" />
+          <img src="/navbar/home.svg" alt="home" />
+          <img src="/navbar/explore.svg" alt="explore" />
+          <img src="/navbar/chat.svg" alt="chat" />
+          <img src="/navbar/avatar.svg" alt="avatar" />
         </Right>
       </Container>
     </Wrapper>

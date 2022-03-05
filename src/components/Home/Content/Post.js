@@ -13,6 +13,7 @@ import {
   Text,
   Tooltip,
 } from "@nextui-org/react";
+import useSound from "use-sound";
 
 function Post() {
   const [states, setStates] = useState({
@@ -20,7 +21,14 @@ function Post() {
     commentBox: false,
   });
 
+  const [playOn] = useSound("/sfx/pop-up-off.mp3", { id: "on" });
+  const [playOff] = useSound("/sfx/pop-up-on.mp3", { id: "off" });
   const handleLike = () => {
+    if (states.liked) {
+      playOff();
+    } else {
+      playOn();
+    }
     setStates({
       ...states,
       liked: !states.liked,
@@ -37,9 +45,11 @@ function Post() {
   return (
     <Wrapper>
       <Left>
-        <img
+        <Avatar
+          css={{ borderRadius: ".4rem" }}
+          size="xl"
+          squared
           src="https://64.media.tumblr.com/1383819b7f0b991ef68bc281f89d5a19/8dcd93b41db3cfad-0b/s64x64u_c1/7441bc33a8296299f03a86d47bcd12c9f57a1387.pnj"
-          alt=""
         />
       </Left>
       <Right>
@@ -77,7 +87,7 @@ function Post() {
           <Controls>
             <Tooltip
               css={{ color: "#fff" }}
-              content={"Like"}
+              content={states.liked ? "Liked" : "Like"}
               rounded
               color="invert"
             >
@@ -165,7 +175,7 @@ export default Post;
 export const Wrapper = styled.div`
   display: flex;
   margin-top: 1.5rem;
-  gap: 1rem;
+  gap: 1.25rem;
 
   @media (max-width: 1124px) {
     margin-top: 0.5rem;
@@ -179,7 +189,7 @@ export const Left = styled.div`
     border-radius: 5px;
   }
 
-  @media (max-width: 1124px) {
+  @media (max-width: 40em) {
     display: none;
   }
 `;
@@ -194,7 +204,7 @@ export const Right = styled.div`
     object-fit: cover;
   }
 
-  @media (max-width: 1124px) {
+  @media (max-width: 40em) {
     border-radius: 0;
   }
 `;

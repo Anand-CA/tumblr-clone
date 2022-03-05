@@ -22,9 +22,11 @@ export const Right = styled.div`
   align-items: center;
   gap: 1rem;
 
-  svg {
+  img {
     cursor: pointer;
     user-select: none;
+    height: 25px;
+
     &:active {
       transform: scale(0.9);
     }
