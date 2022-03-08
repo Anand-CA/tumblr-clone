@@ -3,3 +3,14 @@ import { io } from "socket.io-client";
 export const socket = io("http://localhost:8000", {
 	autoConnect: false
 });
+
+export const startSocket = userId => {
+	socket.auth = {
+		userId
+	};
+	socket.connect();
+};
+
+export const stopSocket = () => {
+	socket.disconnect();
+};

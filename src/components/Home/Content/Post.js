@@ -6,6 +6,7 @@ import { FaRegComment } from "react-icons/fa";
 import { FiShare } from "react-icons/fi";
 import {
 	Avatar,
+	Button,
 	Card,
 	Col,
 	Input,
@@ -15,8 +16,9 @@ import {
 } from "@nextui-org/react";
 import useSound from "use-sound";
 import { RiSendPlaneFill } from "react-icons/ri";
+import axios from "axios";
 
-function Post() {
+function Post({ p }) {
 	const [states, setStates] = useState({
 		liked: false,
 		commentBox: false
@@ -43,6 +45,11 @@ function Post() {
 		});
 	};
 
+	const deletePost = () => {
+		alert("delete post");
+		axios.delete(`/post/delete/${}`);
+	};
+
 	return (
 		<Wrapper>
 			<Left>
@@ -50,7 +57,7 @@ function Post() {
 					css={{ borderRadius: ".4rem" }}
 					size="xl"
 					squared
-					src="https://64.media.tumblr.com/1383819b7f0b991ef68bc281f89d5a19/8dcd93b41db3cfad-0b/s64x64u_c1/7441bc33a8296299f03a86d47bcd12c9f57a1387.pnj"
+					src={p?.user?.avatar}
 				/>
 			</Left>
 			<Right>
@@ -61,36 +68,43 @@ function Post() {
 								display: "none"
 							}
 						}}
-						src="avatar.png"
+						src={p?.user?.avatar}
 						size="md"
 					/>
-					<p>Kellykline</p>
+					<p>{p?.user?.email}</p>
 					<a href="#">Follow</a>
-					<BsThreeDots fontSize="1.7rem" />
+					<Row style={{ justifyContent: "end" }}>
+						<Tooltip
+							content={
+								<Button onClick={deletePost} color="primary" auto>
+									Delete
+								</Button>
+							}
+							placement="bottom"
+							trigger="hover"
+							color="primary"
+						>
+							<BsThreeDots fontSize="1.7rem" />
+						</Tooltip>
+					</Row>
 				</Head>
 
 				{/* change with nextjs image */}
-				<img
-					src="https://64.media.tumblr.com/15de46329965e27f849b0910ad753bb3/545bc9d485617e23-f4/s540x810/26922c06a5eef8600f5d6a8bde8495788a84c222.jpg"
-					alt=""
-				/>
+				<img src={p?.image} alt="" />
 
 				<ContentContainer>
-					<Desc>
-						Lorem ipsum dolor sit amet consectetur adipisicing elit.
-						Perferendis, aspernatur?
-					</Desc>
+					<Desc>{p?.caption}</Desc>
 
 					<Tag>#sorry for posting</Tag>
 
 					<Stat>
 						<Like>
 							<img src="/post/heart.svg" alt="" />
-							<span>5</span>
+							<span>{p?.likeCount}</span>
 						</Like>
 						<Comment>
 							<img src="/post/comment.svg" alt="" />
-							<span>15</span>
+							<span>{p?.commentCount}</span>
 						</Comment>
 					</Stat>
 
@@ -231,10 +245,6 @@ const Head = styled.div`
 		color: #00b8ff;
 		font-size: 0.95rem;
 		margin-bottom: -0.2rem;
-	}
-
-	svg {
-		margin-left: auto;
 	}
 `;
 

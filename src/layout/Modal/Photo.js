@@ -1,92 +1,131 @@
-import { Button, Row, Text } from "@nextui-org/react";
-import React from "react";
-import { FiSettings } from "react-icons/fi";
+import { Button, Card, Input, Loading, Row, Textarea } from "@nextui-org/react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { BsCameraFill } from "react-icons/bs";
+import { IoIosCloseCircle } from "react-icons/io";
+import axios from "../../utils/axios";
+import Toast from "../Toast";
+import { socket } from "../../utils/socketio";
 
-function Photo({ closeModal, openNoti }) {
+function PhotoModal({ closeModal, setToast }) {
+	const [file, setFile] = useState(null);
+	const [capTxt, setCapTxt] = useState("");
+	const [loading, setLoading] = useState(false);
+
+	const uploadPost = e => {
+		e.preventDefault();
+		const formdata = new FormData();
+		formdata.append("file", file);
+		formdata.append("captionTxt", capTxt);
+
+		setLoading(true);
+		axios
+			.post("/post/create", formdata)
+			.then(res => {
+				setLoading(false);
+				closeModal();
+				setToast({
+					show: true,
+					type: "success",
+					msg: "Post uploaded successfully"
+				});
+				socket.emit("notify-post", {
+					msg: `${res.data.user.email} uploaded a new post`
+				});
+			})
+			.catch(err => {
+				setLoading(false);
+				closeModal();
+				setToast({
+					show: true,
+					type: "error",
+					msg: err.response.data.error
+				});
+			});
+	};
 	return (
-		<Container>
-			<Left>
-				<img src="/avatar.png" alt="avatar" />
-			</Left>
-			<Right>
-				<Row
+		<Right onSubmit={uploadPost}>
+			<UploadBtn onChange={e => setFile(e.target.files[0])} htmlFor="formId">
+				Upload a photo
+				<BsCameraFill color="currentColor" />
+				<input name="" type="file" id="formId" hidden />
+			</UploadBtn>
+			{file && (
+				<Row>
+					<Card bordered shadow={false} css={{ mw: "400px" }}>
+						<p>{file.name}</p>
+						<IoIosCloseCircle
+							onClick={() => setFile(null)}
+							fontSize="1.5rem"
+							color="#f21361"
+						/>
+					</Card>
+				</Row>
+			)}
+			<Textarea
+				value={capTxt}
+				onChange={e => setCapTxt(e.target.value)}
+				label="Write your caption"
+				placeholder="..."
+			/>
+			<Row justify="space-between">
+				<Button
 					css={{
-						justifyContent: "space-between",
-						alignItems: "center",
-						gap: "1rem"
+						minWidth: "$5",
+						borderRadius: ".2rem",
+						background: "#9da6af"
 					}}
+					size="sm"
+					onClick={closeModal}
+					type="button"
 				>
-					<Text small>densecblogs</Text>
-					<FiSettings fontSize="1.4rem" color="grey" />
-				</Row>
-				<TitleInput placeholder="Title" />
-				<TextArea
-					name=""
-					id=""
-					cols="30"
-					placeholder="Your text here..."
-					rows="10"
-				></TextArea>
-
-				<Row justify="space-between">
-					<Button
-						css={{
-							minWidth: "$5",
-							background: "#9da6af"
-						}}
-						size="sm"
-						onClick={closeModal}
-					>
-						Close
-					</Button>
-					<Button
-						css={{
-							minWidth: "$5",
-							background: "#00b8ff"
-						}}
-						size="sm"
-						onClick={() => {
-							openNoti();
-							closeModal();
-						}}
-					>
-						Post
-					</Button>
-				</Row>
-			</Right>
-		</Container>
+					Close
+				</Button>
+				<Button
+					css={{
+						minWidth: "$5",
+						borderRadius: ".2rem",
+						background: "#00b8ff"
+					}}
+					size="sm"
+					disabled={!file}
+					type="submit"
+				>
+					{loading ? (
+						<Loading type="spinner" color="white" size="sm" />
+					) : (
+						"Post"
+					)}
+				</Button>
+			</Row>
+		</Right>
 	);
 }
 
-export default Photo;
+export default PhotoModal;
 
-export const Container = styled.div`
-	display: flex;
-	gap: 1rem;
-	padding: 1rem;
-`;
-export const Left = styled.div`
-	img {
-		border-radius: 5px;
-	}
-`;
-export const Right = styled.div`
-	flex: 1;
-	border-radius: 5px;
+export const Right = styled.form`
 	background: #fff;
+	color: #000;
+	border-radius: 5px;
+	flex: 1;
+
 	display: flex;
 	flex-direction: column;
 	padding: 1rem;
-	gap: 0.4rem;
+	gap: 1.4rem;
+
+	input {
+	}
 `;
 
-export const TitleInput = styled.input`
-	font-size: 2rem;
-	border: none;
-	outline: none;
-`;
-export const TextArea = styled.textarea`
-	border: none;
-	outline: none;
+const UploadBtn = styled.label`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 2rem;
+	background: ${props => props.theme.colors.primary};
+	color: #fff;
+	padding: 0.6rem;
+	border-radius: 5px;
 `;

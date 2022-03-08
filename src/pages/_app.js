@@ -1,8 +1,8 @@
 import Head from "next/head";
-import { createGlobalStyle } from "styled-components";
-import { useCallback, useEffect } from "react";
-import { socket } from "../utils/socketio";
-import { ThemeProvider } from "styled-components";
+import { Provider } from "react-redux";
+import { createGlobalStyle, ThemeProvider } from "styled-components";
+import useAuth from "../hooks/useAuth";
+import { useStore } from "../redux/store";
 
 const GlobalStyle = createGlobalStyle`
   /* box sizing */
@@ -40,19 +40,9 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-function intitialiseSocket() {
-	console.log("render");
-	socket.auth = {
-		userId: "568u6787"
-	};
-	socket.connect();
-}
-
 function MyApp({ Component, pageProps }) {
-	const memo = useCallback(() => {}, []);
-	useEffect(() => {
-		memo();
-	}, [memo]);
+	const store = useStore(pageProps.initialReduxState);
+	useAuth(store.dispatch);
 
 	const theme = {
 		colors: {
@@ -67,10 +57,12 @@ function MyApp({ Component, pageProps }) {
 				<meta charSet="utf-8" />
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
 			</Head>
-			<ThemeProvider theme={theme}>
-				<GlobalStyle />
-				<Component {...pageProps} />
-			</ThemeProvider>
+			<Provider store={store}>
+				<ThemeProvider theme={theme}>
+					<GlobalStyle />
+					<Component {...pageProps} />
+				</ThemeProvider>
+			</Provider>
 		</>
 	);
 }
