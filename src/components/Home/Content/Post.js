@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { BsThreeDots } from "react-icons/bs";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
@@ -16,9 +16,15 @@ import {
 } from "@nextui-org/react";
 import useSound from "use-sound";
 import { RiSendPlaneFill } from "react-icons/ri";
-import axios from "axios";
+import axios from "../../../utils/axios";
+import { socket } from "../../../utils/socketio";
+import { removePost } from "../../../redux/actions/post";
+import { useDispatch, useSelector } from "react-redux";
+import { follow, unFollow } from "../../../redux/actions/auth";
 
 function Post({ p }) {
+	const dispatch = useDispatch();
+	const user = useSelector(state => state.auth.user);
 	const [states, setStates] = useState({
 		liked: false,
 		commentBox: false
@@ -38,6 +44,14 @@ function Post({ p }) {
 		});
 	};
 
+	useEffect(() => {
+		socket.on("post-delete", data => {
+			console.log("🚀 ~ file: Post.js ~ line 49 ~ useEffect ~ data", data);
+
+			dispatch(removePost(data.postId));
+		});
+	}, [dispatch]);
+
 	const handleComment = () => {
 		setStates({
 			...states,
@@ -46,15 +60,22 @@ function Post({ p }) {
 	};
 
 	const deletePost = () => {
-		alert("delete post");
-		axios.delete(`/post/delete/${}`);
+		axios
+			.delete(`/post/delete/${p._id}`)
+			.then(res => {
+				console.log(res.data);
+			})
+			.catch(err => {
+				console.log(err);
+			});
 	};
 
 	return (
 		<Wrapper>
 			<Left>
 				<Avatar
-					css={{ borderRadius: ".4rem" }}
+					// bordered
+					// borderWeight="light"
 					size="xl"
 					squared
 					src={p?.user?.avatar}
@@ -71,8 +92,34 @@ function Post({ p }) {
 						src={p?.user?.avatar}
 						size="md"
 					/>
-					<p>{p?.user?.email}</p>
-					<a href="#">Follow</a>
+					<Text
+						css={{
+							whiteSpace: "nowrap"
+						}}
+					>
+						{p?.user?.displayName}
+					</Text>
+					{user?._id !== p?.user?._id &&
+						(p?.user?.followers?.includes(user?._id) ? (
+							<a
+								href="#"
+								onClick={() => {
+									dispatch(unFollow(p.user._id));
+								}}
+							>
+								Followed
+							</a>
+						) : (
+							<a
+								href="#"
+								onClick={() => {
+									dispatch(follow(p.user._id));
+								}}
+							>
+								Follow
+							</a>
+						))}
+
 					<Row style={{ justifyContent: "end" }}>
 						<Tooltip
 							content={
@@ -80,7 +127,7 @@ function Post({ p }) {
 									Delete
 								</Button>
 							}
-							placement="bottom"
+							placement="bottomEnd"
 							trigger="hover"
 							color="primary"
 						>
@@ -90,7 +137,7 @@ function Post({ p }) {
 				</Head>
 
 				{/* change with nextjs image */}
-				<img src={p?.image} alt="" />
+				<img src={p?.image?.url} alt="" />
 
 				<ContentContainer>
 					<Desc>{p?.caption}</Desc>

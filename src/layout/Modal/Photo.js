@@ -30,7 +30,7 @@ function PhotoModal({ closeModal, setToast }) {
 					msg: "Post uploaded successfully"
 				});
 				socket.emit("notify-post", {
-					msg: `${res.data.user.email} uploaded a new post`
+					msg: `${res.data.user.displayName} uploaded a new post`
 				});
 			})
 			.catch(err => {

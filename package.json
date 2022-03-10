@@ -10,6 +10,7 @@
 	},
 	"dependencies": {
 		"@nextui-org/react": "^1.0.2-beta.4",
+		"@react-aria/ssr": "^3.1.2",
 		"axios": "^0.26.0",
 		"jwt-decode": "^3.1.2",
 		"next": "12.1.0",
@@ -26,6 +27,7 @@
 		"use-sound": "^4.0.1"
 	},
 	"devDependencies": {
+		"babel-plugin-styled-components": "^2.0.6",
 		"eslint": "^8.10.0",
 		"eslint-config-next": "12.1.0",
 		"prettier": "2.5.1"

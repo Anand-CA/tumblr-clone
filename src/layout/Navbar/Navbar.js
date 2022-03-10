@@ -2,6 +2,7 @@ import {
 	Avatar,
 	Button,
 	Checkbox,
+	Col,
 	Input,
 	Modal,
 	Row,
@@ -15,7 +16,7 @@ import { HiLockClosed } from "react-icons/hi";
 import { FiMail } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
 import { useTheme } from "styled-components";
-import axios from "axios";
+import axios from "../../utils/axios";
 import Link from "next/link";
 import { GoogleLogin } from "react-google-login";
 import { useDispatch, useSelector } from "react-redux";
@@ -46,7 +47,7 @@ const Navbar = () => {
 
 	function onGoogleSuccess(response) {
 		axios
-			.post("http://localhost:8000/api/v1/auth/google", {
+			.post("/auth/google", {
 				tokenId: response.tokenId
 			})
 			.then(res => {
@@ -107,7 +108,7 @@ const Navbar = () => {
 					<Text css={{ textAlign: "center" }}>OR</Text>
 					<Spacer y="$3" />
 					<GoogleLogin
-						clientId="43606210965-2cgmfflk9qhp485q39mtrg4gactu0veh.apps.googleusercontent.com"
+						clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}
 						buttonText="Login with google"
 						onSuccess={onGoogleSuccess}
 						onFailure={onGoogleFailure}
@@ -131,19 +132,40 @@ const Navbar = () => {
 								<img src="/navbar/chat.svg" alt="chat" />
 								<Tooltip
 									content={
-										<Button
-											onClick={() => {
-												dispatch(logout());
-												stopSocket();
+										<div
+											style={{
+												display: "flex",
+												flexDirection: "column",
+												gap: ".3rem"
 											}}
-											color="error"
-											auto
 										>
-											Log out
-										</Button>
+											<Text h3 color="primary">
+												Following 0
+											</Text>
+											<Text
+												css={{
+													whiteSpace: "nowrap"
+												}}
+												h3
+												color="error"
+											>
+												Followers 0
+											</Text>
+											<Button
+												onClick={() => {
+													dispatch(logout());
+													stopSocket();
+												}}
+												color="white"
+												css={{ color: "#000", borderRadius: 0 }}
+												auto
+											>
+												Log out
+											</Button>
+										</div>
 									}
 									trigger="click"
-									color="primary"
+									css={{ backgroundColor: "#fff", borderRadius: 3 }}
 									placement="bottomEnd"
 								>
 									<Avatar size="md" src={user.avatar} zoomed />

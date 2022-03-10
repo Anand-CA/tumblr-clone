@@ -7,8 +7,10 @@ import Toast from "../../../layout/Toast";
 import Text from "../../../layout/Modal/Text";
 import Photo from "../../../layout/Modal/Photo";
 import { socket } from "../../../utils/socketio";
+import { useSelector } from "react-redux";
 
 function PostHeader() {
+	const user = useSelector(state => state.auth.user);
 	const icons = ["text", "photo", "quote", "link", "chat", "video", "audio"];
 	const [visible, setVisible] = useState(false);
 	const [notiShow, setNotiShow] = useState(false);
@@ -94,10 +96,12 @@ function PostHeader() {
 			<Wrapper>
 				<Left>
 					<Avatar
-						css={{ borderRadius: ".4rem" }}
+						// bordered
+						// borderWeight="light"
+						// css={{ borderRadius: ".4rem" }}
 						size="xl"
 						squared
-						src="avatar.png"
+						src={user?.avatar}
 					/>
 				</Left>
 				<Right>

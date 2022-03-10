@@ -3,6 +3,7 @@ import { Provider } from "react-redux";
 import { createGlobalStyle, ThemeProvider } from "styled-components";
 import useAuth from "../hooks/useAuth";
 import { useStore } from "../redux/store";
+import { SSRProvider } from "@react-aria/ssr";
 
 const GlobalStyle = createGlobalStyle`
   /* box sizing */
@@ -52,7 +53,7 @@ function MyApp({ Component, pageProps }) {
 	};
 
 	return (
-		<>
+		<SSRProvider>
 			<Head>
 				<meta charSet="utf-8" />
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -63,7 +64,7 @@ function MyApp({ Component, pageProps }) {
 					<Component {...pageProps} />
 				</ThemeProvider>
 			</Provider>
-		</>
+		</SSRProvider>
 	);
 }
 

@@ -1,41 +1,36 @@
-import React, { useEffect, useState } from "react";
-import PostHeader from "./PostHeader";
-import { Container, Left, Right } from "./Content.styled";
-import Blogs from "./Blogs";
-import Post from "./Post";
-import axios from "../../../utils/axios";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addPost, fetchPosts } from "../../../redux/actions/post";
 import { socket } from "../../../utils/socketio";
+import Blogs from "./Blogs";
+import { Container, Left, Right } from "./Content.styled";
+import Post from "./Post";
+import PostHeader from "./PostHeader";
 
 function Content() {
-	const [posts, setPosts] = useState([]);
+	const dispatch = useDispatch();
+	const posts = useSelector(state => state.post.posts);
 
 	useEffect(() => {
 		socket.on("post", data => {
 			console.log("new post added", data.mPost);
-			setPosts(prev => [data.mPost, ...prev]);
+			dispatch(addPost(data.mPost));
 		});
 
 		return () => {
 			socket.off("post");
 		};
-	}, []);
+	}, [dispatch]);
 
 	useEffect(() => {
-		axios
-			.get("/post/all")
-			.then(res => {
-				setPosts(res.data.posts);
-			})
-			.catch(err => {
-				console.log(err.response.data);
-			});
-	}, []);
+		dispatch(fetchPosts());
+	}, [dispatch]);
 
 	return (
 		<Container>
 			<Left>
 				<PostHeader />
-				{posts.map(p => (
+				{posts?.map(p => (
 					<Post p={p} key={p._id} />
 				))}
 			</Left>
