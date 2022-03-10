@@ -49,6 +49,26 @@ export default function reducer(state = initialState, action) {
 				user: null
 			};
 
+		case "FOLLOW_USER":
+			return {
+				...state,
+				user: {
+					...state.user,
+					following: [...state.user.following, action.payload]
+				}
+			};
+
+		case "UNFOLLOW_USER":
+			return {
+				...state,
+				user: {
+					...state.user,
+					following: state.user.following.filter(
+						user => user !== action.payload
+					)
+				}
+			};
+
 		default:
 			return state;
 	}

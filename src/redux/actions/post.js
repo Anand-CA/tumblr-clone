@@ -18,28 +18,34 @@ const removePost = id => async dispatch => {
 	dispatch({ type: "REMOVE_POST", payload: id });
 };
 
-const follow = id => async dispatch => {
+const likePost = id => async dispatch => {
 	try {
-		const res = await axios.put(`/auth/follow/${id}`);
+		const res = await axios.patch(`/post/like/${id}`);
 		dispatch({
-			type: "FOLLOW_USER",
-			payload: id
+			type: "LIKE_POST",
+			payload: {
+				postId: id,
+				userId: res.data.userId
+			}
+		});
+	} catch (err) {
+		console.log(err);
+	}
+};
+
+const dislikePost = id => async dispatch => {
+	try {
+		const res = await axios.patch(`/post/dislike/${id}`);
+		dispatch({
+			type: "DISLIKE_POST",
+			payload: {
+				postId: id,
+				userId: res.data.userId
+			}
 		});
 	} catch (error) {
 		console.log(error);
 	}
 };
 
-const unFollow = id => async dispatch => {
-	try {
-		const res = await axios.put(`/auth/unfollow/${id}`);
-		dispatch({
-			type: "UNFOLLOW_USER",
-			payload: id
-		});
-	} catch (error) {
-		console.log(error);
-	}
-};
-
-export { fetchPosts, addPost, removePost, follow, unFollow };
+export { fetchPosts, addPost, removePost, likePost, dislikePost };

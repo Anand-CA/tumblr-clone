@@ -1,6 +1,6 @@
 import axios from "../../utils/axios";
 
-export const signin = (formData, id, router) => async dispatch => {
+const signin = (formData, id, router) => async dispatch => {
 	try {
 		const res = await axios.post("/login", formData);
 		dispatch({ type: LOGIN, payload: res.data });
@@ -18,7 +18,7 @@ export const signin = (formData, id, router) => async dispatch => {
 	}
 };
 
-export const signup = (formData, router) => async dispatch => {
+const signup = (formData, router) => async dispatch => {
 	try {
 		const res = await axios.post("/register", formData);
 		dispatch({ type: LOGIN, payload: res.data });
@@ -31,8 +31,35 @@ export const signup = (formData, router) => async dispatch => {
 	}
 };
 
-export const logout = () => async dispatch => {
+const logout = () => async dispatch => {
 	dispatch({
 		type: "LOGOUT_USER"
 	});
 };
+
+const follow = id => async dispatch => {
+	try {
+		const res = await axios.patch(`/auth/follow/${id}`);
+
+		dispatch({
+			type: "FOLLOW_USER",
+			payload: id
+		});
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+const unFollow = id => async dispatch => {
+	try {
+		const res = await axios.patch(`/auth/unfollow/${id}`);
+		dispatch({
+			type: "UNFOLLOW_USER",
+			payload: id
+		});
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export { signin, signup, logout, follow, unFollow };

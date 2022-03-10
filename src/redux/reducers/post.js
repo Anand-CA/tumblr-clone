@@ -38,15 +38,33 @@ export default function reducer(state = initialState, action) {
 				posts: [action.payload, ...state.posts]
 			};
 
-		case "FOLLOW_USER":
+		case "LIKE_POST":
 			return {
-				...state
+				...state,
+				posts: state.posts.map(post => {
+					if (post._id === action.payload.postId) {
+						return {
+							...post,
+							likes: [...post.likes, action.payload.userId]
+						};
+					}
+					return post;
+				})
 			};
 
-		case "UNFOLLOW_USER":
+		case "DISLIKE_POST":
 			return {
-				...state
+				...state,
+				posts: state.posts.map(post => {
+					if (post._id === action.payload.postId) {
+						post.likes = post.likes.filter(
+							like => like !== action.payload.userId
+						);
+					}
+					return post;
+				})
 			};
+
 		default:
 			return state;
 	}

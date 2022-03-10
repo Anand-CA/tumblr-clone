@@ -140,7 +140,7 @@ const Navbar = () => {
 											}}
 										>
 											<Text h3 color="primary">
-												Following 0
+												Following {user?.following?.length}
 											</Text>
 											<Text
 												css={{
@@ -149,7 +149,7 @@ const Navbar = () => {
 												h3
 												color="error"
 											>
-												Followers 0
+												Followers {user?.followers?.length}
 											</Text>
 											<Button
 												onClick={() => {

@@ -12,37 +12,28 @@ import {
 	Input,
 	Row,
 	Text,
+	theme,
 	Tooltip
 } from "@nextui-org/react";
 import useSound from "use-sound";
 import { RiSendPlaneFill } from "react-icons/ri";
 import axios from "../../../utils/axios";
 import { socket } from "../../../utils/socketio";
-import { removePost } from "../../../redux/actions/post";
+import { dislikePost, likePost, removePost } from "../../../redux/actions/post";
 import { useDispatch, useSelector } from "react-redux";
 import { follow, unFollow } from "../../../redux/actions/auth";
+import { useTheme } from "styled-components";
 
 function Post({ p }) {
 	const dispatch = useDispatch();
+	const theme = useTheme();
 	const user = useSelector(state => state.auth.user);
 	const [states, setStates] = useState({
-		liked: false,
 		commentBox: false
 	});
 
 	const [playOn] = useSound("/sfx/pop-up-off.mp3", { id: "on" });
 	const [playOff] = useSound("/sfx/pop-up-on.mp3", { id: "off" });
-	const handleLike = () => {
-		if (states.liked) {
-			playOff();
-		} else {
-			playOn();
-		}
-		setStates({
-			...states,
-			liked: !states.liked
-		});
-	};
 
 	useEffect(() => {
 		socket.on("post-delete", data => {
@@ -100,24 +91,30 @@ function Post({ p }) {
 						{p?.user?.displayName}
 					</Text>
 					{user?._id !== p?.user?._id &&
-						(p?.user?.followers?.includes(user?._id) ? (
-							<a
-								href="#"
+						(user?.following?.includes(p?.user?._id) ? (
+							<Text
 								onClick={() => {
 									dispatch(unFollow(p.user._id));
 								}}
+								css={{
+									color: theme.colors.primary,
+									cursor: "pointer"
+								}}
 							>
 								Followed
-							</a>
+							</Text>
 						) : (
-							<a
-								href="#"
+							<Text
 								onClick={() => {
 									dispatch(follow(p.user._id));
 								}}
+								css={{
+									color: theme.colors.primary,
+									cursor: "pointer"
+								}}
 							>
 								Follow
-							</a>
+							</Text>
 						))}
 
 					<Row style={{ justifyContent: "end" }}>
@@ -158,18 +155,27 @@ function Post({ p }) {
 					<Controls>
 						<Tooltip
 							css={{ color: "#fff" }}
-							content={states.liked ? "Liked" : "Like"}
+							content={p?.likes?.includes(user?._id) ? "Liked" : "Like"}
 							rounded
 							color="invert"
 						>
-							{states.liked ? (
+							{p?.likes?.includes(user?._id) ? (
 								<AiFillHeart
-									onClick={handleLike}
+									onClick={() => {
+										dispatch(dislikePost(p._id));
+										playOn();
+									}}
 									color="red"
 									fontSize="1.7rem"
 								/>
 							) : (
-								<AiOutlineHeart onClick={handleLike} fontSize="1.7rem" />
+								<AiOutlineHeart
+									onClick={() => {
+										dispatch(likePost(p._id));
+										playOff();
+									}}
+									fontSize="1.7rem"
+								/>
 							)}
 						</Tooltip>
 

@@ -42,8 +42,28 @@ function PostHeader() {
 			});
 		});
 
+		socket.on("follow", data => {
+			console.log("follow", data);
+			setToast({
+				show: true,
+				type: "warning",
+				msg: data.msg
+			});
+		});
+
+		socket.on("like", data => {
+			console.log("like", data);
+			setToast({
+				show: true,
+				type: "warning",
+				msg: data.msg
+			});
+		});
+
 		return () => {
 			socket.off("post-notify");
+			socket.off("follow");
+			socket.off("like");
 		};
 	}, []);
 
