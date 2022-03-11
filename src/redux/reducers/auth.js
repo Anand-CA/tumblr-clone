@@ -1,6 +1,7 @@
 export const initialState = {
 	isAuthenticated: false,
 	user: null,
+	users: [],
 	signinStatus: "idle",
 	signinErr: null,
 
@@ -49,24 +50,104 @@ export default function reducer(state = initialState, action) {
 				user: null
 			};
 
-		case "FOLLOW_USER":
+		case "GET_USERS":
 			return {
 				...state,
-				user: {
-					...state.user,
-					following: [...state.user.following, action.payload]
-				}
+				users: action.payload
 			};
 
-		case "UNFOLLOW_USER":
+		case "SET_FOLLOWING_FOLLOWERS":
+			const newUsers = [...state.users];
+			//find sender by index
+			const senderIndex = newUsers.findIndex(
+				user => user._id === action.payload.sender
+			);
+			console.log(
+				"🚀 ~ file: auth.js ~ line 65 ~ reducer ~ senderIndex",
+				senderIndex
+			);
+			//find receiver by index
+			const receiverIndex = newUsers.findIndex(
+				user => user._id === action.payload.receiver
+			);
+			console.log(
+				"🚀 ~ file: auth.js ~ line 70 ~ reducer ~ receiverIndex",
+				receiverIndex
+			);
+			//set sender following
+			newUsers[senderIndex].following.push(action.payload.receiver);
+			//set receiver followers
+			newUsers[receiverIndex].followers.push(action.payload.sender);
+
+			if (action.payload.sender === state.user._id) {
+				return {
+					...state,
+					user: {
+						...state.user,
+						following: newUsers[senderIndex].following,
+						followers: newUsers[senderIndex].followers
+					}
+				};
+			} else if (action.payload.receiver === state.user._id) {
+				return {
+					...state,
+					user: {
+						...state.user,
+						following: newUsers[receiverIndex].following,
+						followers: newUsers[receiverIndex].followers
+					}
+				};
+			}
+
 			return {
 				...state,
-				user: {
-					...state.user,
-					following: state.user.following.filter(
-						user => user !== action.payload
-					)
-				}
+				users: newUsers
+			};
+
+		case "UNSET_FOLLOWING_FOLLOWERS":
+			const newUsers2 = [...state.users];
+			//find sender by index
+			const senderIndex2 = newUsers2.findIndex(
+				user => user._id === action.payload.sender
+			);
+			console.log(
+				"🚀 ~ file: auth.js ~ line 85 ~ reducer ~ senderIndex2",
+				senderIndex2
+			);
+			//find receiver by index
+			const receiverIndex2 = newUsers2.findIndex(
+				user => user._id === action.payload.receiver
+			);
+			console.log(
+				"🚀 ~ file: auth.js ~ line 90 ~ reducer ~ receiverIndex2",
+				receiverIndex2
+			);
+			//set sender following
+			newUsers2[senderIndex2].following = newUsers2[
+				senderIndex2
+			].following.filter(user => user !== action.payload.receiver);
+			//set receiver followers
+			newUsers2[receiverIndex2].followers = newUsers2[
+				receiverIndex2
+			].followers.filter(user => user !== action.payload.sender);
+
+			if (
+				action.payload.sender === state.user._id ||
+				action.payload.receiver === state.user._id
+			) {
+				return {
+					...state,
+					user: {
+						...state.user,
+						following: newUsers2[senderIndex2].following,
+						followers: newUsers2[receiverIndex2].followers
+					}
+				};
+			}
+
+			return {
+				...state,
+				users: newUsers2
 			};
 
 		default:

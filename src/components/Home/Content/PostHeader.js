@@ -7,7 +7,7 @@ import Toast from "../../../layout/Toast";
 import Text from "../../../layout/Modal/Text";
 import Photo from "../../../layout/Modal/Photo";
 import { socket } from "../../../utils/socketio";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Modal from "../../../layout/Modal";
 
 function PostHeader() {
@@ -21,6 +21,7 @@ function PostHeader() {
 		type: "",
 		msg: ""
 	});
+	const dispatch = useDispatch();
 	const openModal = i => {
 		setActive(i);
 		setVisible(true);
@@ -36,19 +37,24 @@ function PostHeader() {
 	useEffect(() => {
 		socket.on("post-notify", data => {
 			console.log("receiver", data);
-			setToast({
-				show: true,
-				type: "warning",
-				msg: data.msg
+			dispatch({
+				type: "OPEN_TOAST",
+				payload: {
+					show: true,
+					type: data.type,
+					msg: data.msg
+				}
 			});
 		});
 
-		socket.on("follow", data => {
-			console.log("follow", data);
-			setToast({
-				show: true,
-				type: "warning",
-				msg: data.msg
+		socket.on("follow-notify", data => {
+			dispatch({
+				type: "OPEN_TOAST",
+				payload: {
+					show: true,
+					type: "warning",
+					message: data.msg
+				}
 			});
 		});
 
@@ -63,7 +69,6 @@ function PostHeader() {
 
 		return () => {
 			socket.off("post-notify");
-			socket.off("follow");
 			socket.off("like");
 		};
 	}, []);
@@ -90,34 +95,6 @@ function PostHeader() {
 					<Photo closeModal={closeModal} setToast={setToast} />
 				)}
 			</Modal>
-			{/* <Modal
-				aria-labelledby="modal-title"
-				open={visible}
-				onClose={closeModal}
-				width="35rem"
-				css={{
-					borderRadius: "0",
-					background: "transparent"
-				}}
-			>
-				<Modal.Body
-					css={{
-						display: "flex",
-						flexDirection: "row"
-					}}
-				>
-					<ModalLeft>
-						<img src="/avatar.png" alt="" />
-					</ModalLeft>
-
-					{active === "text" && (
-						<Text closeModal={closeModal} setToast={setToast} />
-					)}
-					{active === "photo" && (
-						<Photo closeModal={closeModal} setToast={setToast} />
-					)}
-				</Modal.Body>
-			</Modal> */}
 			{/* ---------------------------------------------------- */}
 			<Wrapper>
 				<Left>

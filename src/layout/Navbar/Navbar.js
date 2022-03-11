@@ -42,8 +42,40 @@ const Navbar = () => {
 			console.log("connected");
 		});
 
+		socket.on("follow", data => {
+			dispatch({
+				type: "FOLLOW_USER",
+				payload: data.userId
+			});
+			dispatch({
+				type: "OPEN_TOAST",
+				payload: {
+					show: true,
+					type: "warning",
+					message: data.msg
+				}
+			});
+		});
+
+		socket.on("unfollow", data => {
+			dispatch({
+				type: "UNFOLLOW_USER",
+				payload: data.userId
+			});
+			dispatch({
+				type: "OPEN_TOAST",
+				payload: {
+					show: true,
+					type: "warning",
+					message: data.msg
+				}
+			});
+		});
+
 		return () => {
 			socket.off("connect");
+			socket.off("follow");
+			socket.off("unfollow");
 		};
 	}, []);
 

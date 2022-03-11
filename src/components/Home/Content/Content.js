@@ -6,6 +6,7 @@ import Blogs from "./Blogs";
 import { Container, Left, Right } from "./Content.styled";
 import Post from "./Post";
 import PostHeader from "./PostHeader";
+import Users from "./Users";
 
 function Content() {
 	const dispatch = useDispatch();
@@ -35,7 +36,8 @@ function Content() {
 				))}
 			</Left>
 			<Right>
-				<Blogs />
+				<Users />
+				{/* <Blogs /> */}
 				{/* <Radar />
         <Sponsored /> */}
 			</Right>

@@ -40,11 +40,6 @@ const logout = () => async dispatch => {
 const follow = id => async dispatch => {
 	try {
 		const res = await axios.patch(`/auth/follow/${id}`);
-
-		dispatch({
-			type: "FOLLOW_USER",
-			payload: id
-		});
 	} catch (error) {
 		dispatch({
 			type: "OPEN_TOAST",
@@ -59,13 +54,21 @@ const follow = id => async dispatch => {
 const unFollow = id => async dispatch => {
 	try {
 		const res = await axios.patch(`/auth/unfollow/${id}`);
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+const getUsers = () => async dispatch => {
+	try {
+		const res = await axios.get("/auth/allusers");
 		dispatch({
-			type: "UNFOLLOW_USER",
-			payload: id
+			type: "GET_USERS",
+			payload: res.data.users
 		});
 	} catch (error) {
 		console.log(error);
 	}
 };
 
-export { signin, signup, logout, follow, unFollow };
+export { signin, signup, logout, follow, unFollow, getUsers };

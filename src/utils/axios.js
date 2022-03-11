@@ -17,4 +17,17 @@ instance.interceptors.request.use(
 	}
 );
 
+// check if jwt expired
+// instance.interceptors.response.use(
+// 	response => {
+// 		return response;
+// 	},
+// 	error => {
+// 		if(error.response.data.error === "jwt expired") {
+
+// 		}
+// 		return Promise.reject(error);
+// 	}
+// );
+
 export default instance;
