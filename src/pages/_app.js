@@ -4,6 +4,7 @@ import { createGlobalStyle, ThemeProvider } from "styled-components";
 import useAuth from "../hooks/useAuth";
 import { useStore } from "../redux/store";
 import { SSRProvider } from "@react-aria/ssr";
+import Toast from "../layout/Toast";
 
 const GlobalStyle = createGlobalStyle`
   /* box sizing */
@@ -53,18 +54,21 @@ function MyApp({ Component, pageProps }) {
 	};
 
 	return (
-		<SSRProvider>
+		<>
 			<Head>
 				<meta charSet="utf-8" />
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
 			</Head>
-			<Provider store={store}>
-				<ThemeProvider theme={theme}>
-					<GlobalStyle />
-					<Component {...pageProps} />
-				</ThemeProvider>
-			</Provider>
-		</SSRProvider>
+			<SSRProvider>
+				<Provider store={store}>
+					<ThemeProvider theme={theme}>
+						<GlobalStyle />
+						<Toast />
+						<Component {...pageProps} />
+					</ThemeProvider>
+				</Provider>
+			</SSRProvider>
+		</>
 	);
 }
 

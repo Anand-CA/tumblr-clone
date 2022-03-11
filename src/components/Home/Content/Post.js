@@ -28,6 +28,7 @@ function Post({ p }) {
 	const dispatch = useDispatch();
 	const theme = useTheme();
 	const user = useSelector(state => state.auth.user);
+	const [likesCount, setLikesCount] = useState(p?.likes?.length);
 	const [states, setStates] = useState({
 		commentBox: false
 	});
@@ -41,6 +42,16 @@ function Post({ p }) {
 
 			dispatch(removePost(data.postId));
 		});
+
+		socket.on("likesCount", data => {
+			console.log("🚀 ~ file: Post.js ~ line 47 ~ useEffect ~ data", data);
+			setLikesCount(data.likesCount);
+		});
+
+		return () => {
+			socket.off("post-delete");
+			socket.off("likesCount");
+		};
 	}, [dispatch]);
 
 	const handleComment = () => {
@@ -57,7 +68,13 @@ function Post({ p }) {
 				console.log(res.data);
 			})
 			.catch(err => {
-				console.log(err);
+				dispatch({
+					type: "OPEN_TOAST",
+					payload: {
+						message: err.response.data.error,
+						type: "error"
+					}
+				});
 			});
 	};
 
@@ -144,7 +161,7 @@ function Post({ p }) {
 					<Stat>
 						<Like>
 							<img src="/post/heart.svg" alt="" />
-							<span>{p?.likeCount}</span>
+							<span>{likesCount}</span>
 						</Like>
 						<Comment>
 							<img src="/post/comment.svg" alt="" />

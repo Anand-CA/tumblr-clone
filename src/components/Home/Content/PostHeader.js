@@ -1,4 +1,4 @@
-import { Avatar, Modal } from "@nextui-org/react";
+import { Avatar } from "@nextui-org/react";
 import Image from "next/image";
 import styled from "styled-components";
 import { useState, useEffect } from "react";
@@ -8,6 +8,7 @@ import Text from "../../../layout/Modal/Text";
 import Photo from "../../../layout/Modal/Photo";
 import { socket } from "../../../utils/socketio";
 import { useSelector } from "react-redux";
+import Modal from "../../../layout/Modal";
 
 function PostHeader() {
 	const user = useSelector(state => state.auth.user);
@@ -81,10 +82,15 @@ function PostHeader() {
 
 	return (
 		<>
-			<Toast show={toast.show} type={toast.type}>
-				{toast.msg}
-			</Toast>
-			<Modal
+			<Modal open={visible} closeModal={closeModal}>
+				{active === "text" && (
+					<Text closeModal={closeModal} setToast={setToast} />
+				)}
+				{active === "photo" && (
+					<Photo closeModal={closeModal} setToast={setToast} />
+				)}
+			</Modal>
+			{/* <Modal
 				aria-labelledby="modal-title"
 				open={visible}
 				onClose={closeModal}
@@ -111,7 +117,7 @@ function PostHeader() {
 						<Photo closeModal={closeModal} setToast={setToast} />
 					)}
 				</Modal.Body>
-			</Modal>
+			</Modal> */}
 			{/* ---------------------------------------------------- */}
 			<Wrapper>
 				<Left>

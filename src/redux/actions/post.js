@@ -29,7 +29,13 @@ const likePost = id => async dispatch => {
 			}
 		});
 	} catch (err) {
-		console.log(err);
+		dispatch({
+			type: "OPEN_TOAST",
+			payload: {
+				message: err.response.data.error,
+				type: "error"
+			}
+		});
 	}
 };
 

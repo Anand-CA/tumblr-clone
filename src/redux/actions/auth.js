@@ -46,7 +46,13 @@ const follow = id => async dispatch => {
 			payload: id
 		});
 	} catch (error) {
-		console.log(error);
+		dispatch({
+			type: "OPEN_TOAST",
+			payload: {
+				message: error.response.data.error,
+				type: "error"
+			}
+		});
 	}
 };
 

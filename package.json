@@ -12,6 +12,7 @@
 		"@nextui-org/react": "^1.0.2-beta.4",
 		"@react-aria/ssr": "^3.1.2",
 		"axios": "^0.26.0",
+		"framer-motion": "^6.2.8",
 		"jwt-decode": "^3.1.2",
 		"next": "12.1.0",
 		"react": "17.0.2",

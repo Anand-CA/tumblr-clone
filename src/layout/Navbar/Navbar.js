@@ -1,6 +1,7 @@
 import {
 	Avatar,
 	Button,
+	Card,
 	Checkbox,
 	Col,
 	Input,
@@ -21,6 +22,7 @@ import Link from "next/link";
 import { GoogleLogin } from "react-google-login";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../redux/actions/auth";
+import { FaBell } from "react-icons/fa";
 import { socket, startSocket, stopSocket } from "../../utils/socketio";
 
 const Navbar = () => {
@@ -130,6 +132,42 @@ const Navbar = () => {
 								<img src="/navbar/home.svg" alt="home" />
 								<img src="/navbar/explore.svg" alt="explore" />
 								<img src="/navbar/chat.svg" alt="chat" />
+								<Tooltip
+									content={
+										<div
+											style={{
+												display: "flex",
+												flexDirection: "column",
+												gap: ".3rem"
+											}}
+										>
+											<Card bordered shadow={false} css={{ w: "250px" }}>
+												<p>
+													Lorem ipsum dolor sit amet consectetur adipisicing
+													elit. Odit dolorem repellat iusto, animi, delectus
+													sequi recusandae odio excepturi impedit nobis
+													molestias deserunt sit non facilis dicta quaerat fuga
+													atque distinctio.
+												</p>
+											</Card>
+
+											<Card bordered shadow={false} css={{ mw: "400px" }}>
+												<p>A bordered card.</p>
+											</Card>
+											<Card bordered shadow={false} css={{ mw: "400px" }}>
+												<p>A bordered card.</p>
+											</Card>
+										</div>
+									}
+									trigger="click"
+									css={{
+										backgroundColor: "#fff",
+										borderRadius: 3
+									}}
+									placement="bottomEnd"
+								>
+									<FaBell fontSize="1.6rem" color="#fff" />
+								</Tooltip>
 								<Tooltip
 									content={
 										<div

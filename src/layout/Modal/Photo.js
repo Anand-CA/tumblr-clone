@@ -6,11 +6,13 @@ import { IoIosCloseCircle } from "react-icons/io";
 import axios from "../../utils/axios";
 import Toast from "../Toast";
 import { socket } from "../../utils/socketio";
+import { useDispatch } from "react-redux";
 
 function PhotoModal({ closeModal, setToast }) {
 	const [file, setFile] = useState(null);
 	const [capTxt, setCapTxt] = useState("");
 	const [loading, setLoading] = useState(false);
+	const dispatch = useDispatch();
 
 	const uploadPost = e => {
 		e.preventDefault();
@@ -24,10 +26,12 @@ function PhotoModal({ closeModal, setToast }) {
 			.then(res => {
 				setLoading(false);
 				closeModal();
-				setToast({
-					show: true,
-					type: "success",
-					msg: "Post uploaded successfully"
+				dispatch({
+					type: "OPEN_TOAST",
+					payload: {
+						message: "post uploaded successfully",
+						type: "success"
+					}
 				});
 				socket.emit("notify-post", {
 					msg: `${res.data.user.displayName} uploaded a new post`
