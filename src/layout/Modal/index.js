@@ -1,17 +1,20 @@
 import { Avatar } from "@nextui-org/react";
 import React, { useEffect, useRef } from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
 import useOnClickOutside from "../../hooks/useOutsideClick";
 
 function Modal({ open, closeModal, children }) {
 	const ref = useRef();
 	useOnClickOutside(ref, closeModal);
+	const user = useSelector(state => state.auth.user);
+
 	if (open) {
 		return (
 			<Wrapper>
 				<Container ref={ref}>
 					<Left>
-						<Avatar size="xl" squared src="/avatar.png" />
+						<Avatar size="xl" squared src={user?.avatar || "/avatar.png"} />
 					</Left>
 
 					{children}

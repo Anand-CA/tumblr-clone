@@ -37,20 +37,24 @@ function Post({ p }) {
 	const [playOff] = useSound("/sfx/pop-up-on.mp3", { id: "off" });
 
 	useEffect(() => {
-		socket.on("post-delete", data => {
-			console.log("🚀 ~ file: Post.js ~ line 49 ~ useEffect ~ data", data);
-
-			dispatch(removePost(data.postId));
-		});
-
 		socket.on("likesCount", data => {
-			console.log("🚀 ~ file: Post.js ~ line 47 ~ useEffect ~ data", data);
 			setLikesCount(data.likesCount);
 		});
 
+		socket.on("like-notify", data => {
+			dispatch({
+				type: "OPEN_TOAST",
+				payload: {
+					show: true,
+					type: "warning",
+					message: data.msg
+				}
+			});
+		});
+
 		return () => {
-			socket.off("post-delete");
 			socket.off("likesCount");
+			socket.off("like-notify");
 		};
 	}, [dispatch]);
 
@@ -135,18 +139,20 @@ function Post({ p }) {
 						))}
 
 					<Row style={{ justifyContent: "end" }}>
-						<Tooltip
-							content={
-								<Button onClick={deletePost} color="primary" auto>
-									Delete
-								</Button>
-							}
-							placement="bottomEnd"
-							trigger="hover"
-							color="primary"
-						>
-							<BsThreeDots fontSize="1.7rem" />
-						</Tooltip>
+						{user?._id === p?.user?._id && (
+							<Tooltip
+								content={
+									<Button onClick={deletePost} color="primary" auto>
+										Delete
+									</Button>
+								}
+								placement="bottomEnd"
+								trigger="hover"
+								color="primary"
+							>
+								<BsThreeDots fontSize="1.7rem" />
+							</Tooltip>
+						)}
 					</Row>
 				</Head>
 

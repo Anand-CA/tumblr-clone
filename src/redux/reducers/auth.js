@@ -58,43 +58,32 @@ export default function reducer(state = initialState, action) {
 
 		case "SET_FOLLOWING_FOLLOWERS":
 			const newUsers = [...state.users];
-			//find sender by index
-			const senderIndex = newUsers.findIndex(
-				user => user._id === action.payload.sender
+			const senderDoc = newUsers.find(
+				user => user._id === action.payload.senderId
 			);
-			console.log(
-				"🚀 ~ file: auth.js ~ line 65 ~ reducer ~ senderIndex",
-				senderIndex
-			);
-			//find receiver by index
-			const receiverIndex = newUsers.findIndex(
-				user => user._id === action.payload.receiver
-			);
-			console.log(
-				"🚀 ~ file: auth.js ~ line 70 ~ reducer ~ receiverIndex",
-				receiverIndex
-			);
-			//set sender following
-			newUsers[senderIndex].following.push(action.payload.receiver);
-			//set receiver followers
-			newUsers[receiverIndex].followers.push(action.payload.sender);
 
-			if (action.payload.sender === state.user._id) {
+			const receiverDoc = newUsers.find(
+				user => user._id === action.payload.receiverId
+			);
+
+			senderDoc.following.push(receiverDoc._id);
+			receiverDoc.followers.push(senderDoc._id);
+
+			if (state.user._id === action.payload.senderId) {
 				return {
 					...state,
 					user: {
 						...state.user,
-						following: newUsers[senderIndex].following,
-						followers: newUsers[senderIndex].followers
+						following: senderDoc.following
 					}
 				};
-			} else if (action.payload.receiver === state.user._id) {
+			}
+			if (state.user._id === action.payload.receiverId) {
 				return {
 					...state,
 					user: {
 						...state.user,
-						following: newUsers[receiverIndex].following,
-						followers: newUsers[receiverIndex].followers
+						followers: receiverDoc.followers
 					}
 				};
 			}
@@ -106,41 +95,36 @@ export default function reducer(state = initialState, action) {
 
 		case "UNSET_FOLLOWING_FOLLOWERS":
 			const newUsers2 = [...state.users];
-			//find sender by index
-			const senderIndex2 = newUsers2.findIndex(
-				user => user._id === action.payload.sender
+			const senderDoc2 = newUsers2.find(
+				user => user._id === action.payload.senderId
 			);
-			console.log(
-				"🚀 ~ file: auth.js ~ line 85 ~ reducer ~ senderIndex2",
-				senderIndex2
-			);
-			//find receiver by index
-			const receiverIndex2 = newUsers2.findIndex(
-				user => user._id === action.payload.receiver
-			);
-			console.log(
-				"🚀 ~ file: auth.js ~ line 90 ~ reducer ~ receiverIndex2",
-				receiverIndex2
-			);
-			//set sender following
-			newUsers2[senderIndex2].following = newUsers2[
-				senderIndex2
-			].following.filter(user => user !== action.payload.receiver);
-			//set receiver followers
-			newUsers2[receiverIndex2].followers = newUsers2[
-				receiverIndex2
-			].followers.filter(user => user !== action.payload.sender);
 
-			if (
-				action.payload.sender === state.user._id ||
-				action.payload.receiver === state.user._id
-			) {
+			const receiverDoc2 = newUsers2.find(
+				user => user._id === action.payload.receiverId
+			);
+
+			senderDoc2.following = senderDoc2.following.filter(
+				following => following !== receiverDoc2._id
+			);
+			receiverDoc2.followers = receiverDoc2.followers.filter(
+				follower => follower !== senderDoc2._id
+			);
+
+			if (state.user._id === action.payload.senderId) {
 				return {
 					...state,
 					user: {
 						...state.user,
-						following: newUsers2[senderIndex2].following,
-						followers: newUsers2[receiverIndex2].followers
+						following: senderDoc2.following
+					}
+				};
+			}
+			if (state.user._id === action.payload.receiverId) {
+				return {
+					...state,
+					user: {
+						...state.user,
+						followers: receiverDoc2.followers
 					}
 				};
 			}

@@ -43,7 +43,7 @@ function PhotoModal({ closeModal, setToast }) {
 				setToast({
 					show: true,
 					type: "error",
-					msg: err.response.data.error
+					msg: err?.response?.data?.error
 				});
 			});
 	};

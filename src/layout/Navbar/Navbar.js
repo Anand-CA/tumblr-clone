@@ -24,6 +24,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../redux/actions/auth";
 import { FaBell } from "react-icons/fa";
 import { socket, startSocket, stopSocket } from "../../utils/socketio";
+import {
+	fetchNotifications,
+	setNotificationAsRead
+} from "../../redux/actions/notification";
+import styled from "styled-components";
 
 const Navbar = () => {
 	const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
@@ -31,11 +36,19 @@ const Navbar = () => {
 	const dispatch = useDispatch();
 	const [visible, setVisible] = React.useState(false);
 	const [showPass, setShowPass] = React.useState(false);
+	const notifications = useSelector(state => state.notification.notifications);
+	const unreadNotifications = useSelector(
+		state => state.notification.unreadNotifications
+	);
 	const open = () => setVisible(true);
 	const close = () => {
 		setVisible(false);
 	};
 	const theme = useTheme();
+
+	useEffect(() => {
+		user && dispatch(fetchNotifications(user._id));
+	}, [dispatch, user]);
 
 	useEffect(() => {
 		socket.on("connect", () => {
@@ -77,7 +90,7 @@ const Navbar = () => {
 			socket.off("follow");
 			socket.off("unfollow");
 		};
-	}, []);
+	}, [dispatch]);
 
 	function onGoogleSuccess(response) {
 		axios
@@ -173,32 +186,41 @@ const Navbar = () => {
 												gap: ".3rem"
 											}}
 										>
-											<Card bordered shadow={false} css={{ w: "250px" }}>
-												<p>
-													Lorem ipsum dolor sit amet consectetur adipisicing
-													elit. Odit dolorem repellat iusto, animi, delectus
-													sequi recusandae odio excepturi impedit nobis
-													molestias deserunt sit non facilis dicta quaerat fuga
-													atque distinctio.
-												</p>
-											</Card>
-
-											<Card bordered shadow={false} css={{ mw: "400px" }}>
-												<p>A bordered card.</p>
-											</Card>
-											<Card bordered shadow={false} css={{ mw: "400px" }}>
-												<p>A bordered card.</p>
-											</Card>
+											{notifications?.map(n => (
+												<Card
+													key={n._id}
+													bordered
+													shadow={false}
+													css={{ w: "250px" }}
+												>
+													<p>{n.msg}</p>
+												</Card>
+											))}
 										</div>
 									}
 									trigger="click"
+									onVisibleChange={visible => {
+										visible &&
+											unreadNotifications.length > 0 &&
+											dispatch(
+												setNotificationAsRead(notifications.map(n => n._id))
+											);
+									}}
 									css={{
 										backgroundColor: "#fff",
 										borderRadius: 3
 									}}
 									placement="bottomEnd"
 								>
-									<FaBell fontSize="1.6rem" color="#fff" />
+									<div
+										style={{
+											display: "flex",
+											position: "relative"
+										}}
+									>
+										{unreadNotifications.length > 0 && <CircleIndication />}
+										<FaBell fontSize="1.6rem" color="#fff" />
+									</div>
 								</Tooltip>
 								<Tooltip
 									content={
@@ -260,3 +282,13 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
+export const CircleIndication = styled.div`
+	height: 0.6rem;
+	width: 0.6rem;
+	position: absolute;
+	right: -4px;
+	top: -4px;
+	border-radius: 50%;
+	background: #17c964;
+`;

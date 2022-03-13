@@ -33,10 +33,12 @@ export default function reducer(state = initialState, action) {
 			};
 
 		case "ADD_POST":
-			return {
-				...state,
-				posts: [action.payload, ...state.posts]
-			};
+			if (state.posts.find(post => post._id !== action.payload._id)) {
+				return {
+					...state,
+					posts: [action.payload, ...state.posts]
+				};
+			}
 
 		case "LIKE_POST":
 			return {

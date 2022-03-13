@@ -104,7 +104,7 @@ function PostHeader() {
 						// css={{ borderRadius: ".4rem" }}
 						size="xl"
 						squared
-						src={user?.avatar}
+						src={user?.avatar || "/avatar.png"}
 					/>
 				</Left>
 				<Right>
