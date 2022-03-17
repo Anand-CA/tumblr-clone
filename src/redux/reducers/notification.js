@@ -21,6 +21,14 @@ export default function reducer(state = initialState, action) {
 				unreadNotifications: []
 			};
 
+		case "DELETE_NOTIFICATION":
+			return {
+				...state,
+				notifications: state.notifications.filter(
+					not => not._id !== action.payload
+				)
+			};
+
 		default:
 			return state;
 	}

@@ -1,17 +1,111 @@
-import { Button, Row, Text } from "@nextui-org/react";
+import { Button, Loading, Row, Text } from "@nextui-org/react";
+import axios from "axios";
 import React, { useState } from "react";
 import { FiSettings } from "react-icons/fi";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 
 function TextModal({ closeModal, setToast }) {
+	const user = useSelector(state => state.auth.user);
 	const [values, setValues] = useState({
 		title: "",
 		desc: ""
 	});
+	const [loading, setLoading] = useState(false);
+	const dispatch = useDispatch();
 
 	const handleSubmit = e => {
 		e.preventDefault();
-		console.log("success");
+		setLoading(true);
+		axios
+			.post(
+				`https://www.glitterlyapi.com/image`,
+				{
+					template_id: "12757e8-8a4e-252c-1ca5-11331410e4",
+					size_name: "Square",
+					changes: [
+						{
+							layer: "background",
+							background: "#0D0E0D",
+							border_color: "black"
+						},
+						{
+							layer: "heading",
+							text: values.title,
+							font_color: "#FFFFFF",
+							background: ""
+						},
+						{
+							layer: "text_2",
+							text: new Date().toLocaleDateString(),
+
+							font_color: "#d0d0d0",
+							background: "",
+							font_highlight: "transparent"
+						},
+						{
+							layer: "text_subheading_2",
+							text: values.desc,
+							font_color: "#dadada",
+							background: "",
+							font_highlight: "transparent"
+						},
+						{
+							layer: "image_1",
+							url: user.avatar,
+							border_color: "#000000"
+						}
+					]
+				},
+				{
+					headers: {
+						"x-api-key": "0c0c9a75-e53c-4d59-88cc-d385cd666fd0"
+					}
+				}
+			)
+			.then(res => {
+				axios
+					.post(
+						"http://localhost:8000/api/v1/post/create",
+						{
+							imageUrl: res.data.url,
+							postType: "text"
+						},
+						{
+							headers: {
+								Authorization: `Bearer ${localStorage.getItem("accesstoken")}`
+							}
+						}
+					)
+					.then(res => {
+						setLoading(false);
+						closeModal();
+						dispatch({
+							type: "OPEN_TOAST",
+							payload: {
+								message: "post uploaded successfully",
+								type: "success"
+							}
+						});
+						socket.emit("notify-post", {
+							msg: `${res.data.user.displayName} uploaded a new post`
+						});
+					})
+					.catch(err => {
+						setLoading(false);
+						closeModal();
+						dispatch({
+							type: "OPEN_TOAST",
+							payload: {
+								message: "post uploaded successfully",
+								type: "success"
+							}
+						});
+					});
+			})
+			.catch(err => {
+				console.log(err);
+			});
 	};
 	return (
 		<Right onSubmit={handleSubmit}>
@@ -25,9 +119,15 @@ function TextModal({ closeModal, setToast }) {
 				<Text small>densecblogs</Text>
 				<FiSettings fontSize="1.4rem" color="grey" />
 			</Row>
-			<TitleInput placeholder="Title" />
+			<TitleInput
+				value={values.title}
+				onChange={e => setValues({ ...values, title: e.target.value })}
+				placeholder="Title"
+			/>
 			<TextArea
 				name=""
+				value={values.desc}
+				onChange={e => setValues({ ...values, desc: e.target.value })}
 				id=""
 				cols="30"
 				placeholder="Your text here..."
@@ -48,12 +148,17 @@ function TextModal({ closeModal, setToast }) {
 				<Button
 					css={{
 						minWidth: "$5",
+						borderRadius: ".2rem",
 						background: "#00b8ff"
 					}}
 					size="sm"
 					type="submit"
 				>
-					Post
+					{loading ? (
+						<Loading type="spinner" color="white" size="sm" />
+					) : (
+						"Post"
+					)}
 				</Button>
 			</Row>
 		</Right>

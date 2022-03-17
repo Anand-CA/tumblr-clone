@@ -22,4 +22,16 @@ const setNotificationAsRead = notifications => async dispatch => {
 	}
 };
 
-export { fetchNotifications, setNotificationAsRead };
+const deleteNotification = notificationId => async dispatch => {
+	try {
+		const res = await axios.delete(`/notification/delete/${notificationId}`);
+		dispatch({
+			type: "DELETE_NOTIFICATION",
+			payload: notificationId
+		});
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export { fetchNotifications, setNotificationAsRead, deleteNotification };

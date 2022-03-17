@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addPost, fetchPosts, removePost } from "../../../redux/actions/post";
 import { socket } from "../../../utils/socketio";
-import Blogs from "./Blogs";
 import { Container, Left, Right } from "./Content.styled";
 import Post from "./Post";
 import PostHeader from "./PostHeader";
@@ -22,8 +21,8 @@ function Content() {
 		});
 
 		return () => {
-			socket.off("post");
-			socket.off("post-delete");
+			socket.off("new-post");
+			socket.off("delete-post");
 		};
 	}, [dispatch]);
 
@@ -35,9 +34,9 @@ function Content() {
 		<Container>
 			<Left>
 				<PostHeader />
-				{posts?.map(p => (
-					<Post p={p} key={p._id} />
-				))}
+				{posts?.map(p => {
+					return <Post p={p} key={p._id} />;
+				})}
 			</Left>
 			<Right>
 				<Users />

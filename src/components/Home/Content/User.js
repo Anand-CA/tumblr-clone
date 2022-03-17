@@ -4,12 +4,12 @@ import Moment from "react-moment";
 import { useDispatch, useSelector } from "react-redux";
 import { follow, unFollow } from "../../../redux/actions/auth";
 
-function User({ u, onlineUsers, lastSeen }) {
+function User({ u, onlineUsers }) {
 	const dispatch = useDispatch();
 	const user = useSelector(state => state.auth.user);
 
 	function isUserOnline(userId) {
-		return onlineUsers.find(user => user.userId === userId);
+		return onlineUsers?.users?.find(user => user.userId === userId);
 	}
 
 	return (
@@ -21,7 +21,27 @@ function User({ u, onlineUsers, lastSeen }) {
 				alignItems: "center"
 			}}
 		>
-			<Avatar squared src={u.avatar} />
+			<div
+				style={{
+					position: "relative"
+				}}
+			>
+				<Avatar referrerPolicy="no-referrer" squared src={u.avatar} />
+				{user && isUserOnline(u._id) && (
+					<div
+						style={{
+							backgroundColor: "lightgreen",
+							width: "13px",
+							height: "13px",
+							borderRadius: "50%",
+							position: "absolute",
+							zIndex: "100",
+							bottom: "-5px",
+							right: "-5px"
+						}}
+					/>
+				)}
+			</div>
 
 			<div
 				style={{
@@ -32,15 +52,19 @@ function User({ u, onlineUsers, lastSeen }) {
 					{u.displayName}
 				</Text>
 
-				{user && isUserOnline(u._id) && <p>🟢</p>}
-
-				{!isUserOnline(u._id) && (
+				{!isUserOnline(u._id) ? (
 					<Text color h6>
 						Last seen{" "}
 						<Moment fromNow ago>
-							{lastSeen ? new Date(lastSeen) : new Date(u.lastSeen)}
+							{onlineUsers?.users?.lastSeen
+								? onlineUsers?.lastSeen
+								: u.lastSeen}
 						</Moment>{" "}
 						ago
+					</Text>
+				) : (
+					<Text color h6>
+						Active now
 					</Text>
 				)}
 			</div>

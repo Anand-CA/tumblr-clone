@@ -3,8 +3,8 @@ import { Provider } from "react-redux";
 import { createGlobalStyle, ThemeProvider } from "styled-components";
 import useAuth from "../hooks/useAuth";
 import { useStore } from "../redux/store";
-import { SSRProvider } from "@react-aria/ssr";
 import Toast from "../layout/Toast";
+import { NextUIProvider } from "@nextui-org/react";
 
 const GlobalStyle = createGlobalStyle`
   /* box sizing */
@@ -59,15 +59,13 @@ function MyApp({ Component, pageProps }) {
 				<meta charSet="utf-8" />
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
 			</Head>
-			<SSRProvider>
-				<Provider store={store}>
-					<ThemeProvider theme={theme}>
-						<GlobalStyle />
-						<Toast />
-						<Component {...pageProps} />
-					</ThemeProvider>
-				</Provider>
-			</SSRProvider>
+			<Provider store={store}>
+				<ThemeProvider theme={theme}>
+					<GlobalStyle />
+					<Toast />
+					<Component {...pageProps} />
+				</ThemeProvider>
+			</Provider>
 		</>
 	);
 }

@@ -11,7 +11,6 @@ function Users() {
 	const user = useSelector(state => state.auth.user);
 	const users = useSelector(state => state.auth.users);
 	const [onlineUsers, setOnlineUsers] = useState([]);
-	const [lastSeen, setLastSeen] = useState(null);
 
 	useEffect(() => {
 		dispatch(getUsers());
@@ -20,13 +19,12 @@ function Users() {
 	useEffect(() => {
 		user &&
 			socket.on("connected:users", data => {
-				setOnlineUsers(data.users);
+				setOnlineUsers(data);
 			});
 
 		user &&
 			socket.on("disconnected:users", data => {
-				setLastSeen(data?.lastSeen);
-				setOnlineUsers(data.users);
+				setOnlineUsers(data);
 			});
 		user &&
 			socket.on("follow", data => {
@@ -51,10 +49,10 @@ function Users() {
 			});
 
 		return () => {
-			socket.off("follow");
-			socket.off("unfollow");
 			socket.off("connected:users");
 			socket.off("disconnected:users");
+			socket.off("follow");
+			socket.off("unfollow");
 		};
 	}, [dispatch, user]);
 
@@ -63,11 +61,11 @@ function Users() {
 			<h3>Users</h3>
 
 			{users?.map(
-				(u, index) =>
+				u =>
 					u._id !== user?._id && (
 						<>
 							<Spacer y={1} />
-							<User u={u} onlineUsers={onlineUsers} lastSeen={lastSeen} />
+							<User u={u} onlineUsers={onlineUsers} />
 						</>
 					)
 			)}

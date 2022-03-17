@@ -25,6 +25,7 @@ import { logout } from "../../redux/actions/auth";
 import { FaBell } from "react-icons/fa";
 import { socket, startSocket, stopSocket } from "../../utils/socketio";
 import {
+	deleteNotification,
 	fetchNotifications,
 	setNotificationAsRead
 } from "../../redux/actions/notification";
@@ -112,6 +113,7 @@ const Navbar = () => {
 	function onGoogleFailure(response) {
 		console.log(response);
 	}
+
 	return (
 		<>
 			<Modal
@@ -186,18 +188,40 @@ const Navbar = () => {
 												gap: ".3rem"
 											}}
 										>
-											{notifications?.map(n => (
-												<Card
-													key={n._id}
-													bordered
-													shadow={false}
-													css={{ w: "250px" }}
-												>
-													<p>{n.msg}</p>
-												</Card>
-											))}
+											{notifications.length > 0 ? (
+												notifications?.map(n => (
+													<Card
+														key={n._id}
+														bordered
+														shadow={false}
+														css={{ w: "250px" }}
+													>
+														<Row justify="space-between">
+															<p>{n.msg}</p>
+															<svg
+																xmlns="http://www.w3.org/2000/svg"
+																width="20"
+																viewBox="0 0 20 20"
+																fill="red"
+																onClick={() => {
+																	dispatch(deleteNotification(n._id));
+																}}
+															>
+																<path
+																	fillRule="evenodd"
+																	d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+																	clipRule="evenodd"
+																/>
+															</svg>
+														</Row>
+													</Card>
+												))
+											) : (
+												<p>No notifications 😞</p>
+											)}
 										</div>
 									}
+									rounded
 									trigger="click"
 									onVisibleChange={visible => {
 										visible &&
@@ -208,7 +232,9 @@ const Navbar = () => {
 									}}
 									css={{
 										backgroundColor: "#fff",
-										borderRadius: 3
+										borderRadius: 3,
+										maxHeight: "300px",
+										overflowY: "scroll"
 									}}
 									placement="bottomEnd"
 								>
