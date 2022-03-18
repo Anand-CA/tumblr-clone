@@ -4,13 +4,14 @@ import Moment from "react-moment";
 import { useDispatch, useSelector } from "react-redux";
 import { follow, unFollow } from "../../../redux/actions/auth";
 
-function User({ u, onlineUsers }) {
+function User({ u }) {
 	const dispatch = useDispatch();
 	const user = useSelector(state => state.auth.user);
+	console.log("🚀 ~ file: User.js ~ line 10 ~ User ~ user", user);
 
-	function isUserOnline(userId) {
-		return onlineUsers?.users?.find(user => user.userId === userId);
-	}
+	// function isUserOnline(userId) {
+	// 	return onlineUsers?.users?.find(user => user.userId === userId);
+	// }
 
 	return (
 		<Row
@@ -27,7 +28,7 @@ function User({ u, onlineUsers }) {
 				}}
 			>
 				<Avatar referrerPolicy="no-referrer" squared src={u.avatar} />
-				{user && isUserOnline(u._id) && (
+				{user && u.isOnline && (
 					<div
 						style={{
 							backgroundColor: "lightgreen",
@@ -52,21 +53,21 @@ function User({ u, onlineUsers }) {
 					{u.displayName}
 				</Text>
 
-				{!isUserOnline(u._id) ? (
-					<Text color h6>
-						Last seen{" "}
-						<Moment fromNow ago>
-							{onlineUsers?.users?.lastSeen
-								? onlineUsers?.lastSeen
-								: u.lastSeen}
-						</Moment>{" "}
-						ago
-					</Text>
-				) : (
-					<Text color h6>
-						Active now
-					</Text>
-				)}
+				{user ? (
+					!u.isOnline ? (
+						<Text color h6>
+							Last seen{" "}
+							<Moment fromNow ago>
+								{new Date(u.lastSeen)}
+							</Moment>{" "}
+							ago
+						</Text>
+					) : (
+						<Text color h6>
+							Active now
+						</Text>
+					)
+				) : null}
 			</div>
 			{u.followers.includes(user?._id) ? (
 				<Button

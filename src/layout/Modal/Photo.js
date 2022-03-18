@@ -89,11 +89,12 @@ function PhotoModal({ closeModal, setToast }) {
 					css={{
 						minWidth: "$5",
 						borderRadius: ".2rem",
-						background: "#00b8ff"
+						background: "#00b8ff",
+						opacity: !file || capTxt.length < 1 ? 0.5 : 1
 					}}
 					size="sm"
-					disabled={!file}
-					type="submit"
+					type={!file || capTxt.length < 1 ? "button" : "submit"}
+					color="gradient"
 				>
 					{loading ? (
 						<Loading type="spinner" color="white" size="sm" />

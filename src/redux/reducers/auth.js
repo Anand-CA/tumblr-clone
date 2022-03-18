@@ -134,6 +134,35 @@ export default function reducer(state = initialState, action) {
 				users: newUsers2
 			};
 
+		case "SET_USER_ONLINE":
+			// we have id and isOnline field
+			const newUsers3 = [...state.users];
+			console.log(
+				"🚀 ~ file: auth.js ~ line 140 ~ reducer ~ newUsers3",
+				newUsers3
+			);
+
+			const userDoc = newUsers3.find(user => user._id === action.payload.id);
+			userDoc.isOnline = action.payload.isOnline;
+
+			return {
+				...state,
+				users: newUsers3
+			};
+
+		case "SET_USER_OFFLINE":
+			// we have id and isOnline and lastSeen field
+			console.log(action.payload);
+			const newUsers4 = [...state.users];
+			const userDoc2 = newUsers4.find(user => user._id === action.payload.id);
+			userDoc2.isOnline = action.payload.isOnline;
+			userDoc2.lastSeen = action.payload.lastSeen;
+
+			return {
+				...state,
+				users: newUsers4
+			};
+
 		default:
 			return state;
 	}

@@ -71,4 +71,5 @@ const getUsers = () => async dispatch => {
 	}
 };
 
+
 export { signin, signup, logout, follow, unFollow, getUsers };

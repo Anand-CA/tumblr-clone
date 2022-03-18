@@ -149,10 +149,12 @@ function TextModal({ closeModal, setToast }) {
 					css={{
 						minWidth: "$5",
 						borderRadius: ".2rem",
-						background: "#00b8ff"
+						background: "#00b8ff",
+						opacity: values.title < 1 || values.desc < 1 ? 0.5 : 1
 					}}
 					size="sm"
-					type="submit"
+					type={values.title < 1 || values.desc < 1 ? "button" : "submit"}
+					color="gradient"
 				>
 					{loading ? (
 						<Loading type="spinner" color="white" size="sm" />

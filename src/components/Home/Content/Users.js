@@ -17,16 +17,21 @@ function Users() {
 	}, [dispatch]);
 
 	useEffect(() => {
-		user &&
-			socket.on("connected:users", data => {
-				setOnlineUsers(data);
+		if (user) {
+			socket.on("user-online", data => {
+				console.log("🚀 ~ file: Users.js ~ line 22 ~ useEffect ~ data", data);
+				// { id , isOnline}
+				// update this user's isOnline status
+				dispatch({ type: "SET_USER_ONLINE", payload: data });
 			});
 
-		user &&
-			socket.on("disconnected:users", data => {
-				setOnlineUsers(data);
+			socket.on("user-offline", data => {
+				console.log("🚀 ~ file: Users.js ~ line 29 ~ useEffect ~ data", data);
+				// { id , isOnline}
+				// update this user's isOnline status
+				dispatch({ type: "SET_USER_OFFLINE", payload: data });
 			});
-		user &&
+
 			socket.on("follow", data => {
 				dispatch({
 					type: "SET_FOLLOWING_FOLLOWERS",
@@ -37,7 +42,6 @@ function Users() {
 				});
 			});
 
-		user &&
 			socket.on("unfollow", data => {
 				dispatch({
 					type: "UNSET_FOLLOWING_FOLLOWERS",
@@ -47,6 +51,7 @@ function Users() {
 					}
 				});
 			});
+		}
 
 		return () => {
 			socket.off("connected:users");
@@ -65,7 +70,7 @@ function Users() {
 					u._id !== user?._id && (
 						<>
 							<Spacer y={1} />
-							<User u={u} onlineUsers={onlineUsers} />
+							<User u={u} />
 						</>
 					)
 			)}
