@@ -1,8 +1,9 @@
 import Head from "next/head";
 import Content from "../components/Home/Content/Content";
 import { Navbar } from "../layout";
+import withAuth from "../hooks/withAuth";
 
-export default function home() {
+function Home() {
 	return (
 		<>
 			<Head>
@@ -17,3 +18,5 @@ export default function home() {
 		</>
 	);
 }
+
+export default withAuth(Home);

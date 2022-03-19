@@ -16,96 +16,108 @@ function TextModal({ closeModal, setToast }) {
 
 	const handleSubmit = e => {
 		e.preventDefault();
-		setLoading(true);
-		axios
-			.post(
-				`https://www.glitterlyapi.com/image`,
-				{
-					template_id: "12757e8-8a4e-252c-1ca5-11331410e4",
-					size_name: "Square",
-					changes: [
-						{
-							layer: "background",
-							background: "#0D0E0D",
-							border_color: "black"
-						},
-						{
-							layer: "heading",
-							text: values.title,
-							font_color: "#FFFFFF",
-							background: ""
-						},
-						{
-							layer: "text_2",
-							text: new Date().toLocaleDateString(),
+		if (user?.isAuthenticated) {
+			setLoading(true);
+			axios
+				.post(
+					`https://www.glitterlyapi.com/image`,
+					{
+						template_id: "12757e8-8a4e-252c-1ca5-11331410e4",
+						size_name: "Square",
+						changes: [
+							{
+								layer: "background",
+								background: "#0D0E0D",
+								border_color: "black"
+							},
+							{
+								layer: "heading",
+								text: values.title,
+								font_color: "#FFFFFF",
+								background: ""
+							},
+							{
+								layer: "text_2",
+								text: new Date().toLocaleDateString(),
 
-							font_color: "#d0d0d0",
-							background: "",
-							font_highlight: "transparent"
-						},
-						{
-							layer: "text_subheading_2",
-							text: values.desc,
-							font_color: "#dadada",
-							background: "",
-							font_highlight: "transparent"
-						},
-						{
-							layer: "image_1",
-							url: user.avatar,
-							border_color: "#000000"
+								font_color: "#d0d0d0",
+								background: "",
+								font_highlight: "transparent"
+							},
+							{
+								layer: "text_subheading_2",
+								text: values.desc,
+								font_color: "#dadada",
+								background: "",
+								font_highlight: "transparent"
+							},
+							{
+								layer: "image_1",
+								url: user.avatar,
+								border_color: "#000000"
+							}
+						]
+					},
+					{
+						headers: {
+							"x-api-key": "0c0c9a75-e53c-4d59-88cc-d385cd666fd0"
 						}
-					]
-				},
-				{
-					headers: {
-						"x-api-key": "0c0c9a75-e53c-4d59-88cc-d385cd666fd0"
 					}
+				)
+				.then(res => {
+					axios
+						.post(
+							"http://localhost:8000/api/v1/post/create",
+							{
+								imageUrl: res.data.url,
+								postType: "text"
+							},
+							{
+								headers: {
+									Authorization: `Bearer ${localStorage.getItem("accesstoken")}`
+								}
+							}
+						)
+						.then(res => {
+							setLoading(false);
+							closeModal();
+							dispatch({
+								type: "OPEN_TOAST",
+								payload: {
+									message: "post uploaded successfully",
+									type: "success"
+								}
+							});
+							socket.emit("notify-post", {
+								msg: `${res.data.user.displayName} uploaded a new post`
+							});
+						})
+						.catch(err => {
+							setLoading(false);
+							closeModal();
+							dispatch({
+								type: "OPEN_TOAST",
+								payload: {
+									message: err.response.data.error,
+									type: "error"
+								}
+							});
+						});
+				})
+				.catch(err => {
+					console.log(err);
+				});
+		} else {
+			setLoading(false);
+			closeModal();
+			dispatch({
+				type: "OPEN_TOAST",
+				payload: {
+					message: "please login to continue",
+					type: "error"
 				}
-			)
-			.then(res => {
-				axios
-					.post(
-						"http://localhost:8000/api/v1/post/create",
-						{
-							imageUrl: res.data.url,
-							postType: "text"
-						},
-						{
-							headers: {
-								Authorization: `Bearer ${localStorage.getItem("accesstoken")}`
-							}
-						}
-					)
-					.then(res => {
-						setLoading(false);
-						closeModal();
-						dispatch({
-							type: "OPEN_TOAST",
-							payload: {
-								message: "post uploaded successfully",
-								type: "success"
-							}
-						});
-						socket.emit("notify-post", {
-							msg: `${res.data.user.displayName} uploaded a new post`
-						});
-					})
-					.catch(err => {
-						setLoading(false);
-						closeModal();
-						dispatch({
-							type: "OPEN_TOAST",
-							payload: {
-								message: "post uploaded successfully",
-								type: "success"
-							}
-						});
-					});
-			})
-			.catch(err => {
-				console.log(err);
 			});
+		}
 	};
 	return (
 		<Right onSubmit={handleSubmit}>

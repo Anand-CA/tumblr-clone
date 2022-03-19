@@ -67,6 +67,42 @@ export default function reducer(state = initialState, action) {
 				})
 			};
 
+		case "ADD_COMMENT":
+			// don't add duplicate comment
+			if (
+				state.posts
+					.find(post => post._id === action.payload.postId)
+					.comments.find(comment => comment._id === action.payload._id)
+			) {
+				return state;
+			}
+
+			return {
+				...state,
+				posts: state.posts.map(post => {
+					if (post._id === action.payload.postId) {
+						return {
+							...post,
+							comments: [action.payload, ...post.comments]
+						};
+					}
+					return post;
+				})
+			};
+
+		case "DELETE_COMMENT":
+			return {
+				...state,
+				posts: state.posts.map(post => {
+					if (post._id === action.payload.postId) {
+						post.comments = post.comments.filter(
+							comment => comment._id !== action.payload.commentId
+						);
+					}
+					return post;
+				})
+			};
+
 		default:
 			return state;
 	}

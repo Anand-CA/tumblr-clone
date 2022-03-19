@@ -23,6 +23,9 @@ import { dislikePost, likePost, removePost } from "../../../redux/actions/post";
 import { useDispatch, useSelector } from "react-redux";
 import { follow, unFollow } from "../../../redux/actions/auth";
 import { useTheme } from "styled-components";
+import { addcomment } from "../../../redux/actions/post";
+import CommentDetail from "./CommentDetail";
+import { AnimatePresence, motion } from "framer-motion";
 
 function Post({ p }) {
 	const dispatch = useDispatch();
@@ -30,8 +33,11 @@ function Post({ p }) {
 	const user = useSelector(state => state.auth.user);
 	const [likesCount, setLikesCount] = useState(p?.likes?.length);
 	const [states, setStates] = useState({
-		commentBox: false
+		commentBox: false,
+		edit: false
 	});
+	const [commentTxt, setCommentTxt] = useState("");
+	const [replyTxt, setReplyTxt] = useState("");
 
 	const [playOn] = useSound("/sfx/pop-up-off.mp3", { id: "on" });
 	const [playOff] = useSound("/sfx/pop-up-on.mp3", { id: "off" });
@@ -52,9 +58,25 @@ function Post({ p }) {
 			});
 		});
 
+		socket.on("comment-added", data => {
+			dispatch({
+				type: "ADD_COMMENT",
+				payload: data
+			});
+		});
+
+		socket.on("comment-delete", data => {
+			dispatch({
+				type: "DELETE_COMMENT",
+				payload: data
+			});
+		});
+
 		return () => {
 			socket.off("likesCount");
 			socket.off("like-notify");
+			socket.off("comment-added");
+			socket.off("comment-delete");
 		};
 	}, [dispatch]);
 
@@ -82,6 +104,26 @@ function Post({ p }) {
 			});
 	};
 
+	const addComment = e => {
+		e.preventDefault();
+		user
+			? dispatch(
+					addcomment({
+						postId: p._id,
+						userId: user._id,
+						content: commentTxt
+					})
+			  )
+			: dispatch({
+					type: "OPEN_TOAST",
+					payload: {
+						message: "You must be logged in to comment",
+						type: "error"
+					}
+			  });
+		setCommentTxt("");
+	};
+
 	return (
 		<Wrapper>
 			<Left>
@@ -91,6 +133,10 @@ function Post({ p }) {
 					size="xl"
 					squared
 					src={p?.user?.avatar}
+					onError={e => {
+						e.target.src = "/post-err-image.png";
+					}}
+					referrerPolicy="no-referrer"
 				/>
 			</Left>
 			<Right>
@@ -157,7 +203,13 @@ function Post({ p }) {
 				</Head>
 
 				{/* change with nextjs image */}
-				<img src={p?.image?.url} alt="" />
+				<img
+					src={p?.image?.url}
+					alt="post-image"
+					onError={e => {
+						e.target.src = "/post-err-image.png";
+					}}
+				/>
 
 				<ContentContainer>
 					<Desc>{p?.caption}</Desc>
@@ -169,10 +221,10 @@ function Post({ p }) {
 							<img src="/post/heart.svg" alt="" />
 							<span>{likesCount}</span>
 						</Like>
-						<Comment>
+						<Row css={{ gap: "$3" }}>
 							<img src="/post/comment.svg" alt="" />
-							<span>{p?.commentCount}</span>
-						</Comment>
+							<span>{p.comments.length}</span>
+						</Row>
 					</Stat>
 
 					<Controls>
@@ -228,41 +280,41 @@ function Post({ p }) {
 					{states.commentBox && (
 						<CommentBox>
 							<Row
+								as="form"
+								onSubmit={addComment}
 								css={{
-									alignItems: "center",
-									gap: "$6"
+									alignItems: "center"
 								}}
 							>
-								<Avatar squared src="avatar.png" />
+								{/* no user profile pic */}
+								<Avatar squared src={user?.avatar || "/avatar.png"} />
 								<Input
-									clearable
 									css={{
-										width: "100%"
+										width: "100%",
+										marginLeft: "$5"
 									}}
 									placeholder="Write a comment..."
-									contentRight={<RiSendPlaneFill fontSize="2rem" />}
+									value={commentTxt}
+									onChange={e => setCommentTxt(e.target.value)}
 								/>
+								<button
+									style={{
+										background: "transparent",
+										border: "none",
+										marginRight: "$3",
+										display: "flex",
+										justifyContent: "center",
+										alignItems: "center"
+									}}
+									type="submit"
+								>
+									<RiSendPlaneFill fontSize="1.3rem" />
+								</button>
 							</Row>
 
-							{/* comment */}
-							<Row
-								css={{
-									alignItems: "center",
-									gap: "$6",
-									padding: "$8 0"
-								}}
-							>
-								<Avatar squared src="avatar.png" />
-								<Card
-									bordered
-									shadow={false}
-									css={{
-										width: "fit-content"
-									}}
-								>
-									<Text small>Lorem ipsum dolor sit amet.</Text>
-								</Card>
-							</Row>
+							{p?.comments?.map((c, i) => (
+								<CommentDetail key={c._id} c={c} />
+							))}
 						</CommentBox>
 					)}
 				</ContentContainer>
@@ -356,11 +408,6 @@ export const Like = styled.div`
 	align-items: center;
 	gap: 0.2rem;
 `;
-export const Comment = styled.div`
-	display: flex;
-	align-items: center;
-	gap: 0.2rem;
-`;
 
 export const Controls = styled.div`
 	border-top: 1px solid lightgrey;
@@ -377,4 +424,11 @@ export const Controls = styled.div`
 
 export const CommentBox = styled.div`
 	padding: 0.5rem 0;
+	max-height: 20rem;
+	overflow-y: scroll;
+	overflow-x: hidden;
+
+	/* hide scrollbar */
+	::-webkit-scrollbar {
+	}
 `;

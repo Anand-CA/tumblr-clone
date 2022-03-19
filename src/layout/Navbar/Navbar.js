@@ -30,6 +30,7 @@ import {
 	setNotificationAsRead
 } from "../../redux/actions/notification";
 import styled from "styled-components";
+import Loader from "../Loader";
 
 const Navbar = () => {
 	const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
@@ -38,6 +39,7 @@ const Navbar = () => {
 	const [visible, setVisible] = React.useState(false);
 	const [showPass, setShowPass] = React.useState(false);
 	const notifications = useSelector(state => state.notification.notifications);
+	const [isLoading, setIsLoading] = React.useState(false);
 	const unreadNotifications = useSelector(
 		state => state.notification.unreadNotifications
 	);
@@ -94,6 +96,7 @@ const Navbar = () => {
 	}, [dispatch]);
 
 	function onGoogleSuccess(response) {
+		setIsLoading(true);
 		axios
 			.post("/auth/google", {
 				tokenId: response.tokenId
@@ -103,10 +106,17 @@ const Navbar = () => {
 				dispatch({ type: "SET_USER", payload: res.data.user });
 				startSocket(res.data.user._id);
 				setVisible(false);
-				// store user in redux and persist user
+				setIsLoading(false);
 			})
 			.catch(err => {
-				console.log(err);
+				dispatch({
+					type: "OPEN_TOAST",
+					payload: {
+						message: err.response.data.error,
+						type: "error"
+					}
+				});
+				setIsLoading(false);
 			});
 	}
 
@@ -117,53 +127,72 @@ const Navbar = () => {
 	return (
 		<>
 			<Modal
-				closeButton
+				closeButton={!isLoading}
 				aria-labelledby="modal-title"
 				open={visible}
 				onClose={close}
+				css={{
+					background: isLoading && "transparent"
+				}}
 			>
-				<Modal.Header>
-					<Text id="modal-title" size={30}>
-						Login
-					</Text>
-				</Modal.Header>
-				<Modal.Body>
-					<Input
-						clearable
-						bordered
-						fullWidth
-						color="primary"
-						size="lg"
-						placeholder="Email"
-						contentLeft={<FiMail />}
-					/>
-					<Input
-						clearable
-						bordered
-						fullWidth
-						color="primary"
-						type={showPass ? "text" : "password"}
-						size="lg"
-						placeholder="Password"
-						contentLeft={<HiLockClosed />}
-					/>
-					<Button
+				{isLoading ? (
+					<Row
 						css={{
-							background: theme.colors.primary
+							height: "27rem",
+							display: "flex",
+							background: "transparent",
+							justifyContent: "center",
+							alignItems: "center",
+							width: "100%"
 						}}
 					>
-						Sign In
-					</Button>
-					<Text css={{ textAlign: "center" }}>OR</Text>
-					<Spacer y="$3" />
-					<GoogleLogin
-						clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}
-						buttonText="Login with google"
-						onSuccess={onGoogleSuccess}
-						onFailure={onGoogleFailure}
-					/>
-				</Modal.Body>
-				<Modal.Footer></Modal.Footer>
+						<Loader />
+					</Row>
+				) : (
+					<>
+						<Modal.Header>
+							<Text id="modal-title" size={30}>
+								Login
+							</Text>
+						</Modal.Header>
+						<Modal.Body>
+							<Input
+								clearable
+								bordered
+								fullWidth
+								color="primary"
+								size="lg"
+								placeholder="Email"
+								contentLeft={<FiMail />}
+							/>
+							<Input
+								clearable
+								bordered
+								fullWidth
+								color="primary"
+								type={showPass ? "text" : "password"}
+								size="lg"
+								placeholder="Password"
+								contentLeft={<HiLockClosed />}
+							/>
+							<Button
+								css={{
+									background: theme.colors.primary
+								}}
+							>
+								Sign In
+							</Button>
+							<Text css={{ textAlign: "center" }}>OR</Text>
+							<Spacer y="$3" />
+							<GoogleLogin
+								clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}
+								buttonText="Login with google"
+								onSuccess={onGoogleSuccess}
+								onFailure={onGoogleFailure}
+							/>
+						</Modal.Body>
+					</>
+				)}
 			</Modal>
 			{/* ---------------------------------------------------- */}
 			<Wrapper>

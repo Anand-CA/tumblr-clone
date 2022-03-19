@@ -1,4 +1,5 @@
 import axios from "../../utils/axios";
+import { startSocket } from "../../utils/socketio";
 
 const signin = (formData, id, router) => async dispatch => {
 	try {
@@ -28,6 +29,17 @@ const signup = (formData, router) => async dispatch => {
 			type: ERRORS,
 			payload: err.response.data
 		});
+	}
+};
+
+const getCurrentUser = () => async dispatch => {
+	try {
+		dispatch({ type: "USER_AUTH_CHECK" });
+		const res = await axios.get("/auth/currentuser");
+		dispatch({ type: "SET_USER", payload: res.data.user });
+		startSocket(res.data.user._id);
+	} catch (error) {
+		console.log(error);
 	}
 };
 
@@ -71,5 +83,4 @@ const getUsers = () => async dispatch => {
 	}
 };
 
-
-export { signin, signup, logout, follow, unFollow, getUsers };
+export { signin, signup, logout, follow, unFollow, getUsers, getCurrentUser };

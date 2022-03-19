@@ -54,4 +54,40 @@ const dislikePost = id => async dispatch => {
 	}
 };
 
-export { fetchPosts, addPost, removePost, likePost, dislikePost };
+const addcomment = data => async dispatch => {
+	try {
+		await axios.post("/comment/add", data);
+	} catch (error) {
+		dispatch({
+			type: "OPEN_TOAST",
+			payload: {
+				message: error.response.data.error,
+				type: "error"
+			}
+		});
+	}
+};
+
+const deletecomment = id => async dispatch => {
+	try {
+		await axios.delete(`/comment/delete/${id}`);
+	} catch (error) {
+		dispatch({
+			type: "OPEN_TOAST",
+			payload: {
+				message: error.response.data.error,
+				type: "error"
+			}
+		});
+	}
+};
+
+export {
+	fetchPosts,
+	addPost,
+	removePost,
+	likePost,
+	dislikePost,
+	addcomment,
+	deletecomment
+};

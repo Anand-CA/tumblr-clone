@@ -49,7 +49,8 @@ function MyApp({ Component, pageProps }) {
 	const theme = {
 		colors: {
 			primary: "#00b8ff",
-			secondary: "#001935"
+			secondary: "#001935",
+			tertiary: "#00CF35"
 		}
 	};
 

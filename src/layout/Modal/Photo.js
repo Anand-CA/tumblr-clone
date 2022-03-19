@@ -1,14 +1,13 @@
-import { Button, Card, Input, Loading, Row, Textarea } from "@nextui-org/react";
-import React, { useEffect, useState } from "react";
-import styled from "styled-components";
+import { Button, Card, Loading, Row, Textarea } from "@nextui-org/react";
+import React, { useState } from "react";
 import { BsCameraFill } from "react-icons/bs";
 import { IoIosCloseCircle } from "react-icons/io";
-import axios from "../../utils/axios";
-import Toast from "../Toast";
-import { socket } from "../../utils/socketio";
 import { useDispatch } from "react-redux";
+import styled from "styled-components";
+import axios from "../../utils/axios";
+import { socket } from "../../utils/socketio";
 
-function PhotoModal({ closeModal, setToast }) {
+function PhotoModal({ closeModal }) {
 	const [file, setFile] = useState(null);
 	const [capTxt, setCapTxt] = useState("");
 	const [loading, setLoading] = useState(false);
@@ -40,10 +39,12 @@ function PhotoModal({ closeModal, setToast }) {
 			.catch(err => {
 				setLoading(false);
 				closeModal();
-				setToast({
-					show: true,
-					type: "error",
-					msg: err?.response?.data?.error
+				dispatch({
+					type: "OPEN_TOAST",
+					payload: {
+						message: err.response.data.error,
+						type: "error"
+					}
 				});
 			});
 	};

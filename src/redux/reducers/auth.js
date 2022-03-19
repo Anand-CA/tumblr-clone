@@ -1,5 +1,6 @@
 export const initialState = {
 	isAuthenticated: false,
+	userCheckStatus: "idle",
 	user: null,
 	users: [],
 	signinStatus: "idle",
@@ -40,7 +41,8 @@ export default function reducer(state = initialState, action) {
 			return {
 				...state,
 				isAuthenticated: true,
-				user: action.payload
+				user: action.payload,
+				userCheckStatus: "succeeded"
 			};
 		case "LOGOUT_USER":
 			localStorage.removeItem("accesstoken");
@@ -143,7 +145,9 @@ export default function reducer(state = initialState, action) {
 			);
 
 			const userDoc = newUsers3.find(user => user._id === action.payload.id);
-			userDoc.isOnline = action.payload.isOnline;
+			if (userDoc) {
+				userDoc.isOnline = action.payload.isOnline;
+			}
 
 			return {
 				...state,
@@ -161,6 +165,12 @@ export default function reducer(state = initialState, action) {
 			return {
 				...state,
 				users: newUsers4
+			};
+
+		case "USER_AUTH_CHECK":
+			return {
+				...state,
+				userCheckStatus: "loading"
 			};
 
 		default:
