@@ -7,7 +7,6 @@ import { follow, unFollow } from "../../../redux/actions/auth";
 function User({ u }) {
 	const dispatch = useDispatch();
 	const user = useSelector(state => state.auth.user);
-	console.log("🚀 ~ file: User.js ~ line 10 ~ User ~ user", user);
 
 	// function isUserOnline(userId) {
 	// 	return onlineUsers?.users?.find(user => user.userId === userId);

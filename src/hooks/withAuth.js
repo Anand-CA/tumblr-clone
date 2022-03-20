@@ -1,3 +1,4 @@
+import chalk from "chalk";
 import React from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
@@ -8,6 +9,7 @@ function withAuth(Component) {
 	const AuthenticatedComponent = () => {
 		const user = useSelector(state => state.auth.user);
 		const userCheckStatus = useSelector(state => state.auth.userCheckStatus);
+		console.log(chalk.white.bgRed("render"));
 
 		if (typeof window !== "undefined") {
 			const token = localStorage.getItem("accesstoken");

@@ -10,7 +10,6 @@ function Users() {
 	const dispatch = useDispatch();
 	const user = useSelector(state => state.auth.user);
 	const users = useSelector(state => state.auth.users);
-	const [onlineUsers, setOnlineUsers] = useState([]);
 
 	useEffect(() => {
 		dispatch(getUsers());
@@ -19,7 +18,6 @@ function Users() {
 	useEffect(() => {
 		if (user) {
 			socket.on("user-online", data => {
-				console.log("🚀 ~ file: Users.js ~ line 22 ~ useEffect ~ data", data);
 				// { id , isOnline}
 				// update this user's isOnline status
 				dispatch({ type: "SET_USER_ONLINE", payload: data });
@@ -68,10 +66,10 @@ function Users() {
 			{users?.map(
 				u =>
 					u._id !== user?._id && (
-						<>
+						<div key={u._id}>
 							<Spacer y={1} />
 							<User u={u} />
-						</>
+						</div>
 					)
 			)}
 

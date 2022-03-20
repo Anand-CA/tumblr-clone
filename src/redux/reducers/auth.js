@@ -147,10 +147,7 @@ export default function reducer(state = initialState, action) {
 		case "SET_USER_ONLINE":
 			// we have id and isOnline field
 			const newUsers3 = [...state.users];
-			console.log(
-				"🚀 ~ file: auth.js ~ line 140 ~ reducer ~ newUsers3",
-				newUsers3
-			);
+
 
 			const userDoc = newUsers3.find(user => user._id === action.payload.id);
 			if (userDoc) {

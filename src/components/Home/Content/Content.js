@@ -1,4 +1,5 @@
 import { Loading, Row } from "@nextui-org/react";
+import { AnimatePresence, AnimateSharedLayout } from "framer-motion";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../../../layout/Loading/Loader";
@@ -62,10 +63,14 @@ function Content() {
 					</Row>
 				)}
 				{posts_status === "failed" && <div>Failed to load posts</div>}
-				{posts_status === "succeeded" &&
-					posts?.map(p => {
-						return <Post p={p} key={p._id} />;
-					})}
+				<AnimateSharedLayout>
+					<AnimatePresence>
+						{posts_status === "succeeded" &&
+							posts?.map(p => {
+								return <Post p={p} key={p._id} />;
+							})}
+					</AnimatePresence>
+				</AnimateSharedLayout>
 			</Left>
 			<Right>
 				<Users />

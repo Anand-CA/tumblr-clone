@@ -125,7 +125,12 @@ function Post({ p }) {
 	};
 
 	return (
-		<Wrapper>
+		<Wrapper
+			layout
+			initial={{ opacity: 0 }}
+			animate={{ opacity: 1 }}
+			exit={{ opacity: 0 }}
+		>
 			<Left>
 				<Avatar
 					// bordered
@@ -262,7 +267,7 @@ function Post({ p }) {
 						>
 							<FaRegComment
 								onClick={handleComment}
-								color={states.commentBox && "green"}
+								color={states.commentBox ? "green" : null}
 								fontSize="1.5rem"
 							/>
 						</Tooltip>
@@ -325,7 +330,7 @@ function Post({ p }) {
 
 export default Post;
 
-export const Wrapper = styled.div`
+export const Wrapper = styled(motion.div)`
 	display: flex;
 	margin-top: 1.5rem;
 	gap: 1.25rem;
