@@ -1,5 +1,5 @@
 import Router from "next/router";
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Auth } from "../components/Auth";
 import Loader from "../layout/Loader";
@@ -20,22 +20,27 @@ function withAuth(Component) {
 				preserveAspectRatio: "xMidYMid slice"
 			}
 		};
-
-		if (userCheckStatus === "loading") {
-			return (
-				<Backdrop>
-					<Lottie options={defaultOptions} height="100%" width="100%" />
-				</Backdrop>
-			);
-		} else if (userCheckStatus === "succeeded") {
-			if (!user) {
+		if (typeof window !== "undefined") {
+			const token = localStorage.getItem("accesstoken");
+			if (token) {
+				if (userCheckStatus === "loading") {
+					return (
+						<Backdrop>
+							<Lottie options={defaultOptions} height="100%" width="100%" />
+						</Backdrop>
+					);
+				} else if (userCheckStatus === "succeeded") {
+					if (!user) {
+						return <Auth />;
+					} else if (user) {
+						return <Component />;
+					}
+				}
+			} else {
 				return <Auth />;
-			} else if (user) {
-				return <Component />;
 			}
-		} else {
-			return null;
 		}
+		return null;
 	};
 
 	return AuthenticatedComponent;

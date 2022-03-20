@@ -1,10 +1,10 @@
 import styled from "styled-components";
 import React from "react";
-import { Row } from "@nextui-org/react";
+import { Row, Text } from "@nextui-org/react";
 import { FcGoogle } from "react-icons/fc";
 import GoogleLogin from "react-google-login";
 import Signup from "./Signup";
-import { motion } from "framer-motion";
+import { AnimateSharedLayout, motion } from "framer-motion";
 import Signin from "./Signin";
 import { startSocket } from "../../utils/socketio";
 import axios from "../../utils/axios";
@@ -43,6 +43,7 @@ export default function Auth() {
 				<img src="/tumblr-text.svg" alt="" />
 				{active === "signin" && <Signin />}
 				<h2>Make stuff, look at stuff, talk about stuff, find your people.</h2>
+
 				<Row
 					css={{
 						flex: 1
@@ -70,14 +71,15 @@ export default function Auth() {
 									style={{
 										height: "3px",
 										width: "100%",
-										background: "#00CF35"
+										background: "#00CF35",
+										borderRadius: "3px"
 									}}
-									layoutId="underline"
 								/>
 							) : null}
 						</Row>
 					))}
 				</Row>
+
 				{active === "Log in" && <Signin />}
 				{active === "Sign up" && <Signup />}
 				<Row
@@ -126,10 +128,9 @@ export default function Auth() {
 				>
 					🚀 Only your email, displayName and photo will be accessed.
 				</p>
-				<div>
-					<img src="" alt="" />
-					<h4></h4>
-				</div>
+				<Text color="error" small>
+					Only google authentication works for now!!!
+				</Text>
 			</Container>
 		</Wrapper>
 	);
