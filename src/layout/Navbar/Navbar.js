@@ -30,7 +30,7 @@ import {
 	setNotificationAsRead
 } from "../../redux/actions/notification";
 import styled from "styled-components";
-import Loader from "../Loader";
+import Loader from "../Loading/Loader";
 
 const Navbar = () => {
 	const isAuthenticated = useSelector(state => state.auth.isAuthenticated);

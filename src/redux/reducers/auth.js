@@ -1,6 +1,7 @@
 export const initialState = {
 	isAuthenticated: false,
 	userCheckStatus: "idle",
+	googleAuthStatus: "idle",
 	user: null,
 	users: [],
 	signinStatus: "idle",
@@ -30,6 +31,12 @@ export default function reducer(state = initialState, action) {
 				signinStatus: "succeeded"
 			};
 
+		case "GOOGLE_AUTH_REQUEST":
+			return {
+				...state,
+				googleAuthStatus: "loading"
+			};
+
 		case "SIGNIN_FAILURE":
 			return {
 				...state,
@@ -42,6 +49,7 @@ export default function reducer(state = initialState, action) {
 				...state,
 				isAuthenticated: true,
 				user: action.payload,
+				googleAuthStatus: "succeeded",
 				userCheckStatus: "succeeded"
 			};
 		case "LOGOUT_USER":

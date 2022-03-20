@@ -16,7 +16,7 @@ function TextModal({ closeModal, setToast }) {
 
 	const handleSubmit = e => {
 		e.preventDefault();
-		if (user?.isAuthenticated) {
+		if (user) {
 			setLoading(true);
 			axios
 				.post(
@@ -98,7 +98,7 @@ function TextModal({ closeModal, setToast }) {
 							dispatch({
 								type: "OPEN_TOAST",
 								payload: {
-									message: err.response.data.error,
+									message: err?.response?.data?.error,
 									type: "error"
 								}
 							});

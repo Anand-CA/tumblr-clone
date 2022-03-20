@@ -32,6 +32,26 @@ const signup = (formData, router) => async dispatch => {
 	}
 };
 
+const googleAuth = id => async dispatch => {
+	try {
+		dispatch({ type: "GOOGLE_AUTH_REQUEST" });
+		const res = await axios.post("/auth/google", {
+			tokenId: id
+		});
+		localStorage.setItem("accesstoken", res.data.accesstoken);
+		dispatch({ type: "SET_USER", payload: res.data.user });
+		startSocket(res.data.user._id);
+	} catch (error) {
+		dispatch({
+			type: "OPEN_TOAST",
+			payload: {
+				message: err.response.data.error,
+				type: "error"
+			}
+		});
+	}
+};
+
 const getCurrentUser = () => async dispatch => {
 	try {
 		dispatch({ type: "USER_AUTH_CHECK" });
@@ -83,4 +103,13 @@ const getUsers = () => async dispatch => {
 	}
 };
 
-export { signin, signup, logout, follow, unFollow, getUsers, getCurrentUser };
+export {
+	signin,
+	signup,
+	logout,
+	follow,
+	unFollow,
+	googleAuth,
+	getUsers,
+	getCurrentUser
+};

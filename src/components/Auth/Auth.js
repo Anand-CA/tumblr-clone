@@ -8,34 +8,24 @@ import { AnimateSharedLayout, motion } from "framer-motion";
 import Signin from "./Signin";
 import { startSocket } from "../../utils/socketio";
 import axios from "../../utils/axios";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { googleAuth } from "../../redux/actions/auth";
+import LoadingScreen from "../../layout/Loading/LoadingScreen";
 
 export default function Auth() {
 	const dispatch = useDispatch();
+	const googleAuthStatus = useSelector(state => state.auth.googleAuthStatus);
 	function onGoogleSuccess(response) {
-		axios
-			.post("/auth/google", {
-				tokenId: response.tokenId
-			})
-			.then(res => {
-				localStorage.setItem("accesstoken", res.data.accesstoken);
-				dispatch({ type: "SET_USER", payload: res.data.user });
-				startSocket(res.data.user._id);
-			})
-			.catch(err => {
-				dispatch({
-					type: "OPEN_TOAST",
-					payload: {
-						message: err.response.data.error,
-						type: "error"
-					}
-				});
-			});
+		dispatch(googleAuth(response.tokenId));
 	}
 
 	const onGoogleFailure = response => {};
 	const tabs = ["Log in", "Sign up"];
 	const [active, setActive] = React.useState(tabs[0]);
+
+	if (googleAuthStatus === "loading") {
+		return <LoadingScreen />;
+	}
 
 	return (
 		<Wrapper>

@@ -1,34 +1,19 @@
-import Router from "next/router";
-import React, { useEffect } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
-import { Auth } from "../components/Auth";
-import Loader from "../layout/Loader";
 import styled from "styled-components";
-import Lottie from "react-lottie";
-import animationData from "../../public/lottie.json";
+import { Auth } from "../components/Auth";
+import LoadingScreen from "../layout/Loading/LoadingScreen";
 
 function withAuth(Component) {
 	const AuthenticatedComponent = () => {
 		const user = useSelector(state => state.auth.user);
 		const userCheckStatus = useSelector(state => state.auth.userCheckStatus);
 
-		const defaultOptions = {
-			loop: true,
-			autoplay: true,
-			animationData: animationData,
-			rendererSettings: {
-				preserveAspectRatio: "xMidYMid slice"
-			}
-		};
 		if (typeof window !== "undefined") {
 			const token = localStorage.getItem("accesstoken");
 			if (token) {
 				if (userCheckStatus === "loading") {
-					return (
-						<Backdrop>
-							<Lottie options={defaultOptions} height="100%" width="100%" />
-						</Backdrop>
-					);
+					return <LoadingScreen />;
 				} else if (userCheckStatus === "succeeded") {
 					if (!user) {
 						return <Auth />;

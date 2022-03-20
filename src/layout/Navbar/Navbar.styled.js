@@ -27,6 +27,10 @@ export const Right = styled.div`
 		user-select: none;
 		height: 25px;
 
+		@media (max-width: 40em) {
+			display: none;
+		}
+
 		&:active {
 			transform: scale(0.9);
 		}
