@@ -15,17 +15,28 @@ function Content() {
 	const posts_status = useSelector(state => state.post.posts_status);
 
 	useEffect(() => {
-		socket.on("new-post", data => {
+		socket.on("post-create", data => {
 			dispatch(addPost(data));
 		});
 
-		socket.on("delete-post", data => {
+		socket.on("post-delete", data => {
 			dispatch(removePost(data.postId));
 		});
 
+		socket.on("post-create-notify", data => {
+			dispatch({
+				type: "OPEN_TOAST",
+				payload: {
+					message: data,
+					type: "warning"
+				}
+			});
+		});
+
 		return () => {
-			socket.off("new-post");
-			socket.off("delete-post");
+			socket.off("post-create");
+			socket.off("post-create");
+			socket.off("post-create-notify");
 		};
 	}, [dispatch]);
 

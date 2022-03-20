@@ -32,9 +32,6 @@ function PhotoModal({ closeModal }) {
 						type: "success"
 					}
 				});
-				socket.emit("notify-post", {
-					msg: `${res.data.user.displayName} uploaded a new post`
-				});
 			})
 			.catch(err => {
 				setLoading(false);
@@ -42,7 +39,7 @@ function PhotoModal({ closeModal }) {
 				dispatch({
 					type: "OPEN_TOAST",
 					payload: {
-						message: err.response.data.error,
+						message: err?.response?.data?.error,
 						type: "error"
 					}
 				});
