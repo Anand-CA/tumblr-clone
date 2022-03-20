@@ -25,7 +25,7 @@ function withAuth(Component) {
 				return <Auth />;
 			}
 		}
-		return null;
+		return <Auth />;
 	};
 
 	return AuthenticatedComponent;
