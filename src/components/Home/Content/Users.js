@@ -24,10 +24,19 @@ function Users() {
 			});
 
 			socket.on("user-offline", data => {
-				console.log("🚀 ~ file: Users.js ~ line 29 ~ useEffect ~ data", data);
 				// { id , isOnline}
 				// update this user's isOnline status
 				dispatch({ type: "SET_USER_OFFLINE", payload: data });
+			});
+
+			socket.on("follow-notify", data => {
+				dispatch({
+					type: "OPEN_TOAST",
+					payload: {
+						message: data.msg,
+						type: "success"
+					}
+				});
 			});
 
 			socket.on("follow", data => {
@@ -52,8 +61,8 @@ function Users() {
 		}
 
 		return () => {
-			socket.off("connected:users");
-			socket.off("disconnected:users");
+			socket.off("user-online");
+			socket.off("user-offline");
 			socket.off("follow");
 			socket.off("unfollow");
 		};

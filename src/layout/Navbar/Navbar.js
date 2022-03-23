@@ -53,48 +53,6 @@ const Navbar = () => {
 		user && dispatch(fetchNotifications(user._id));
 	}, [dispatch, user]);
 
-	useEffect(() => {
-		socket.on("connect", () => {
-			console.log("connected");
-		});
-
-		socket.on("follow", data => {
-			dispatch({
-				type: "FOLLOW_USER",
-				payload: data.userId
-			});
-			dispatch({
-				type: "OPEN_TOAST",
-				payload: {
-					show: true,
-					type: "warning",
-					message: data.msg
-				}
-			});
-		});
-
-		socket.on("unfollow", data => {
-			dispatch({
-				type: "UNFOLLOW_USER",
-				payload: data.userId
-			});
-			dispatch({
-				type: "OPEN_TOAST",
-				payload: {
-					show: true,
-					type: "warning",
-					message: data.msg
-				}
-			});
-		});
-
-		return () => {
-			socket.off("connect");
-			socket.off("follow");
-			socket.off("unfollow");
-		};
-	}, [dispatch]);
-
 	function onGoogleSuccess(response) {
 		setIsLoading(true);
 		axios

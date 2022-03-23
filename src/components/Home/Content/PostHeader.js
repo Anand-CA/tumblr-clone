@@ -47,17 +47,6 @@ function PostHeader() {
 			});
 		});
 
-		socket.on("follow-notify", data => {
-			dispatch({
-				type: "OPEN_TOAST",
-				payload: {
-					show: true,
-					type: "warning",
-					message: data.msg
-				}
-			});
-		});
-
 		socket.on("like", data => {
 			console.log("like", data);
 			setToast({

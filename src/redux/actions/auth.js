@@ -71,12 +71,12 @@ const logout = () => async dispatch => {
 
 const follow = id => async dispatch => {
 	try {
-		const res = await axios.patch(`/auth/follow/${id}`);
+		await axios.patch(`/auth/follow/${id}`);
 	} catch (error) {
 		dispatch({
 			type: "OPEN_TOAST",
 			payload: {
-				message: error.response.data.error,
+				message: error?.response?.data?.error,
 				type: "error"
 			}
 		});

@@ -8,7 +8,7 @@ export const initialState = {
 	signinErr: null,
 
 	signupStatus: "idle",
-	signupErr: null
+	signupErr: null,
 };
 
 export default function reducer(state = initialState, action) {
@@ -147,7 +147,6 @@ export default function reducer(state = initialState, action) {
 		case "SET_USER_ONLINE":
 			// we have id and isOnline field
 			const newUsers3 = [...state.users];
-
 
 			const userDoc = newUsers3.find(user => user._id === action.payload.id);
 			if (userDoc) {
