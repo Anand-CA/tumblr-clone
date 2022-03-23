@@ -26,6 +26,7 @@ import { useTheme } from "styled-components";
 import { addcomment } from "../../../redux/actions/post";
 import CommentDetail from "./CommentDetail";
 import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image";
 
 function Post({ p }) {
 	const dispatch = useDispatch();
@@ -208,12 +209,21 @@ function Post({ p }) {
 				</Head>
 
 				{/* change with nextjs image */}
-				<img
+				{/* <img
 					src={p?.image?.url}
 					alt="post-image"
 					onError={e => {
 						e.target.src = "/post-err-image.png";
 					}}
+				/> */}
+
+				<Image
+					layout="responsive"
+					height={300}
+					width={500}
+					src={p?.image?.url}
+					objectFit="contain"
+					alt="post-image"
 				/>
 
 				<ContentContainer>

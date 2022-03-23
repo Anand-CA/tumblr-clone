@@ -2,7 +2,7 @@ import styled from "styled-components";
 import React, { useEffect } from "react";
 import { Avatar, Input, Text } from "@nextui-org/react";
 
-import { AiOutlineLike } from "react-icons/ai";
+import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import { BsReply, BsFillArrowRightSquareFill } from "react-icons/bs";
 import {
 	MdOutlineModeEditOutline,
@@ -10,7 +10,11 @@ import {
 } from "react-icons/md";
 import { IoMdArrowForward } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
-import { deletecomment } from "../../../redux/actions/post";
+import {
+	deletecomment,
+	dislikeComment,
+	likeComment
+} from "../../../redux/actions/post";
 import { motion } from "framer-motion";
 import { socket } from "../../../utils/socketio";
 
@@ -19,9 +23,15 @@ const CommentDetail = ({ c }) => {
 	const user = useSelector(state => state.auth.user);
 	const [toggle, setToggle] = React.useState({
 		reply: false,
-		like: false,
+		like: c.likes.includes(user._id) ? true : false,
 		edit: false
 	});
+
+	useEffect(() => {
+		c.likes.includes(user._id)
+			? setToggle({ ...toggle, like: true })
+			: setToggle({ ...toggle, like: false });
+	}, [c, user, toggle]);
 
 	const handleToggle = type => {
 		setToggle({
@@ -34,6 +44,10 @@ const CommentDetail = ({ c }) => {
 
 	const deleteComment = () => {
 		dispatch(deletecomment(c._id));
+	};
+
+	const DislikeComment = () => {
+		dispatch(dislikeComment());
 	};
 
 	return (
@@ -51,11 +65,23 @@ const CommentDetail = ({ c }) => {
 					{toggle.edit && <IoMdArrowForward fontSize="1.5rem" />}
 				</Top>
 				<Bottom>
-					<AiOutlineLike
-						fill={toggle.like && "red"}
-						onClick={() => handleToggle("like")}
-						fontSize="1.3rem"
-					/>
+					{toggle.like ? (
+						<AiFillLike
+							fill="red"
+							fontSize="1.3rem"
+							onClick={() => {
+								dispatch(dislikeComment(c._id, c.postId, user._id));
+							}}
+						/>
+					) : (
+						<AiOutlineLike
+							onClick={() => {
+								handleToggle("like");
+								dispatch(likeComment(c._id, c.postId, user._id));
+							}}
+							fontSize="1.3rem"
+						/>
+					)}
 					<Text css={{ marginLeft: "-$2" }} small>
 						{c.likes.length}
 					</Text>

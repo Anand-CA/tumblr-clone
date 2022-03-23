@@ -7,6 +7,7 @@ import Toast from "../layout/Toast";
 import { NextUIProvider } from "@nextui-org/react";
 
 const GlobalStyle = createGlobalStyle`
+ 
   /* box sizing */
   *,
   *::before,
@@ -28,7 +29,7 @@ const GlobalStyle = createGlobalStyle`
 
   body {
     background:#001935;
-    font-family:'Helvetica Neue',Arial,sans-serif;
+    font-family:'Helvetica Neue',sans-serif;
     color:#fff;
     line-height:1.5;
   }

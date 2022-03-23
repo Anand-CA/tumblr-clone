@@ -175,7 +175,7 @@ const Navbar = () => {
 												gap: ".3rem"
 											}}
 										>
-											{notifications.length > 0 ? (
+											{notifications?.length > 0 ? (
 												notifications?.map(n => (
 													<Card
 														key={n._id}

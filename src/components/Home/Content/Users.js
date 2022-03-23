@@ -31,6 +31,11 @@ function Users() {
 
 			socket.on("follow-notify", data => {
 				dispatch({
+					type: "ADD_NOTIFICATION",
+					payload: data.notif
+				});
+
+				dispatch({
 					type: "OPEN_TOAST",
 					payload: {
 						message: data.msg,

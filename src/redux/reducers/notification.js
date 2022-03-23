@@ -14,6 +14,22 @@ export default function reducer(state = initialState, action) {
 				unreadNotifications: notsFiltered
 			};
 
+		case "ADD_NOTIFICATION": {
+			if (state.notifications.length === 0) {
+				const index = state.notifications.findIndex(
+					el => el._id == action.payload._id
+				);
+			}
+			console.log(index);
+
+			if (index === -1) {
+				return {
+					...state,
+					notifications: [action.payload, ...state.notifications]
+				};
+			}
+		}
+
 		case "SET_NOTIFICATION_AS_READ":
 			return {
 				...state,

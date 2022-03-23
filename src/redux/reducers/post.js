@@ -103,6 +103,45 @@ export default function reducer(state = initialState, action) {
 				})
 			};
 
+		case "LIKE_COMMENT":
+			return {
+				...state,
+				posts: state.posts.map(post => {
+					if (post._id === action.payload.postId) {
+						post.comments = post.comments.map(comment => {
+							if (comment._id === action.payload.commentId) {
+								if (!comment.likes.includes(action.payload.userId)) {
+									return {
+										...comment,
+										likes: [...comment.likes, action.payload.userId]
+									};
+								}
+							}
+							return comment;
+						});
+					}
+					return post;
+				})
+			};
+
+		case "DISLIKE_COMMENT":
+			return {
+				...state,
+				posts: state.posts.map(post => {
+					if (post._id === action.payload.postId) {
+						post.comments = post.comments.map(comment => {
+							if (comment._id === action.payload.commentId) {
+								comment.likes = comment.likes.filter(
+									like => like !== action.payload.userId
+								);
+							}
+							return comment;
+						});
+					}
+					return post;
+				})
+			};
+
 		default:
 			return state;
 	}

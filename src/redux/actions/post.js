@@ -82,6 +82,50 @@ const deletecomment = id => async dispatch => {
 	}
 };
 
+const likeComment = (id, postId, userId) => async dispatch => {
+	try {
+		const res = await axios.patch(`/comment/like/${id}`);
+		dispatch({
+			type: "LIKE_COMMENT",
+			payload: {
+				commentId: id,
+				userId,
+				postId
+			}
+		});
+	} catch (error) {
+		dispatch({
+			type: "OPEN_TOAST",
+			payload: {
+				message: error.response.data.error,
+				type: "error"
+			}
+		});
+	}
+};
+
+const dislikeComment = (id, postId, userId) => async dispatch => {
+	try {
+		const res = await axios.patch(`/comment/dislike/${id}`);
+		dispatch({
+			type: "DISLIKE_COMMENT",
+			payload: {
+				commentId: id,
+				userId,
+				postId
+			}
+		});
+	} catch (error) {
+		dispatch({
+			type: "OPEN_TOAST",
+			payload: {
+				message: error.response.data.error,
+				type: "error"
+			}
+		});
+	}
+};
+
 export {
 	fetchPosts,
 	addPost,
@@ -89,5 +133,7 @@ export {
 	likePost,
 	dislikePost,
 	addcomment,
-	deletecomment
+	deletecomment,
+	likeComment,
+	dislikeComment
 };
