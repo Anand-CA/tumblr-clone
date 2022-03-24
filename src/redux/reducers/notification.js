@@ -1,6 +1,6 @@
 const initialState = {
 	notifications: [],
-	unreadNotifications: []
+	unreadNotifications: null
 };
 
 export default function reducer(state = initialState, action) {
@@ -11,30 +11,25 @@ export default function reducer(state = initialState, action) {
 			return {
 				...state,
 				notifications: action.payload,
-				unreadNotifications: notsFiltered
+				unreadNotifications: notsFiltered.length
 			};
 
 		case "ADD_NOTIFICATION": {
-			if (state.notifications.length === 0) {
-				const index = state.notifications.findIndex(
-					el => el._id == action.payload._id
-				);
-			}
-			console.log(index);
+			const nots = [...state.notifications];
+			nots.unshift(action.payload);
+			const notsFiltered = nots.filter(not => not.read === false);
 
-			if (index === -1) {
-				return {
-					...state,
-					notifications: [action.payload, ...state.notifications]
-				};
-			}
+			return {
+				...state,
+				notifications: nots,
+				unreadNotifications: notsFiltered.length
+			};
 		}
 
 		case "SET_NOTIFICATION_AS_READ":
 			return {
 				...state,
-				notifications: action.payload,
-				unreadNotifications: []
+				unreadNotifications: 0
 			};
 
 		case "DELETE_NOTIFICATION":

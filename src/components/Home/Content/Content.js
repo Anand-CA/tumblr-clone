@@ -34,7 +34,23 @@ function Content() {
 			});
 		});
 
+		socket.on("post-like-notify", data => {
+			dispatch({
+				type: "ADD_NOTIFICATION",
+				payload: data.notif
+			});
+
+			dispatch({
+				type: "OPEN_TOAST",
+				payload: {
+					message: data.msg,
+					type: "warning"
+				}
+			});
+		});
+
 		socket.on("comment-notify", data => {
+			console.log("🚀 ~ file: Content.js ~ line 38 ~ useEffect ~ data", data);
 			dispatch({
 				type: "ADD_NOTIFICATION",
 				payload: data.notif
@@ -50,7 +66,6 @@ function Content() {
 		});
 
 		socket.on("comment-like-notify", data => {
-			console.log("🚀 ~ file: Content.js ~ line 53 ~ useEffect ~ data", data);
 			dispatch({
 				type: "ADD_NOTIFICATION",
 				payload: data.notif
@@ -83,6 +98,7 @@ function Content() {
 			socket.off("post-create");
 			socket.off("post-create");
 			socket.off("post-create-notify");
+			socket.off("post-like-notify");
 			socket.off("comment-notify");
 			socket.off("comment-like-notify");
 			socket.off("comment-like");

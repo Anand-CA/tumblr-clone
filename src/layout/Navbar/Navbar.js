@@ -4,6 +4,7 @@ import {
 	Card,
 	Checkbox,
 	Col,
+	Grid,
 	Input,
 	Modal,
 	Row,
@@ -31,6 +32,8 @@ import {
 } from "../../redux/actions/notification";
 import styled from "styled-components";
 import Loader from "../Loading/Loader";
+import Moment from "react-moment";
+import { RiDeleteBack2Line } from "react-icons/ri";
 
 const Navbar = () => {
 	const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
@@ -53,244 +56,115 @@ const Navbar = () => {
 		user && dispatch(fetchNotifications(user._id));
 	}, [dispatch, user]);
 
-	function onGoogleSuccess(response) {
-		setIsLoading(true);
-		axios
-			.post("/auth/google", {
-				tokenId: response.tokenId
-			})
-			.then(res => {
-				localStorage.setItem("accesstoken", res.data.accesstoken);
-				dispatch({ type: "SET_USER", payload: res.data.user });
-				startSocket(res.data.user._id);
-				setVisible(false);
-				setIsLoading(false);
-			})
-			.catch(err => {
-				dispatch({
-					type: "OPEN_TOAST",
-					payload: {
-						message: err.response.data.error,
-						type: "error"
-					}
-				});
-				setIsLoading(false);
-			});
-	}
-
-	function onGoogleFailure(response) {
-		console.log(response);
-	}
-
 	return (
-		<>
-			<Modal
-				closeButton={!isLoading}
-				aria-labelledby="modal-title"
-				open={visible}
-				onClose={close}
-				css={{
-					background: isLoading && "transparent"
-				}}
-			>
-				{isLoading ? (
-					<Row
-						css={{
-							height: "27rem",
-							display: "flex",
-							background: "transparent",
-							justifyContent: "center",
-							alignItems: "center",
-							width: "100%"
-						}}
-					>
-						<Loader />
-					</Row>
-				) : (
-					<>
-						<Modal.Header>
-							<Text id="modal-title" size={30}>
-								Login
-							</Text>
-						</Modal.Header>
-						<Modal.Body>
-							<Input
-								clearable
-								bordered
-								fullWidth
-								color="primary"
-								size="lg"
-								placeholder="Email"
-								contentLeft={<FiMail />}
-							/>
-							<Input
-								clearable
-								bordered
-								fullWidth
-								color="primary"
-								type={showPass ? "text" : "password"}
-								size="lg"
-								placeholder="Password"
-								contentLeft={<HiLockClosed />}
-							/>
-							<Button
-								css={{
-									background: theme.colors.primary
-								}}
-							>
-								Sign In
-							</Button>
-							<Text css={{ textAlign: "center" }}>OR</Text>
-							<Spacer y="$3" />
-							<GoogleLogin
-								clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}
-								buttonText="Login with google"
-								onSuccess={onGoogleSuccess}
-								onFailure={onGoogleFailure}
-							/>
-						</Modal.Body>
-					</>
-				)}
-			</Modal>
-			{/* ---------------------------------------------------- */}
-			<Wrapper>
-				<Container>
-					<Left>
-						<Logo src="/tumblr-logo.svg" alt="tumblr logo" />
-						<Input clearable placeholder="Type something..." />
-					</Left>
+		<Wrapper>
+			<Container>
+				<Left>
+					<Logo src="/tumblr-logo.svg" alt="tumblr logo" />
+					<Input clearable placeholder="Type something..." />
+				</Left>
 
-					<Right>
-						{isAuthenticated ? (
-							<>
-								<img src="/navbar/home.svg" alt="home" />
-								<img src="/navbar/explore.svg" alt="explore" />
-								<img src="/navbar/chat.svg" alt="chat" />
-								<Tooltip
-									content={
-										<div
-											style={{
-												display: "flex",
-												flexDirection: "column",
-												gap: ".3rem"
+				<Right>
+					<img src="/navbar/home.svg" alt="home" />
+					<img src="/navbar/explore.svg" alt="explore" />
+					<img src="/navbar/chat.svg" alt="chat" />
+					{/* notifications */}
+					<Tooltip
+						hideArrow
+						content={
+							<Grid.Container css={{ width: "12rem" }} gap={1}>
+								{notifications.length > 0 ? (
+									notifications?.map(n => (
+										<Row
+											key={n._id}
+											css={{
+												padding: "$4 $5",
+												borderBottom: "2px solid $blue200",
+												gap: "$4"
 											}}
 										>
-											{notifications?.length > 0 ? (
-												notifications?.map(n => (
-													<Card
-														key={n._id}
-														bordered
-														shadow={false}
-														css={{ w: "250px" }}
-													>
-														<Row justify="space-between">
-															<p>{n.msg}</p>
-															<svg
-																xmlns="http://www.w3.org/2000/svg"
-																width="20"
-																viewBox="0 0 20 20"
-																fill="red"
-																onClick={() => {
-																	dispatch(deleteNotification(n._id));
-																}}
-															>
-																<path
-																	fillRule="evenodd"
-																	d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-																	clipRule="evenodd"
-																/>
-															</svg>
-														</Row>
-													</Card>
-												))
-											) : (
-												<p>No notifications 😞</p>
-											)}
-										</div>
-									}
-									rounded
-									trigger="click"
-									onVisibleChange={visible => {
-										visible &&
-											unreadNotifications.length > 0 &&
-											dispatch(
-												setNotificationAsRead(notifications.map(n => n._id))
-											);
-									}}
-									css={{
-										backgroundColor: "#fff",
-										borderRadius: 3,
-										maxHeight: "300px",
-										overflowY: "scroll"
-									}}
-									placement="bottomEnd"
-								>
-									<div
-										style={{
-											display: "flex",
-											position: "relative"
-										}}
-									>
-										{unreadNotifications.length > 0 && <CircleIndication />}
-										<FaBell fontSize="1.6rem" color="#fff" />
-									</div>
-								</Tooltip>
-								<Tooltip
-									content={
-										<div
-											style={{
-												display: "flex",
-												flexDirection: "column",
-												gap: ".3rem"
-											}}
-										>
-											<Text h3 color="primary">
-												Following {user?.following?.length}
-											</Text>
-											<Text
-												css={{
-													whiteSpace: "nowrap"
-												}}
-												h3
-												color="error"
-											>
-												Followers {user?.followers?.length}
-											</Text>
-											<Button
-												onClick={() => {
-													dispatch(logout());
-													stopSocket();
-												}}
-												color="white"
-												css={{ color: "#000", borderRadius: 0 }}
-												auto
-											>
-												Log out
-											</Button>
-										</div>
-									}
-									trigger="click"
-									css={{ backgroundColor: "#fff", borderRadius: 3 }}
-									placement="bottomEnd"
-								>
-									<Avatar size="md" src={user.avatar} zoomed />
-								</Tooltip>
-							</>
-						) : (
-							<Button
-								css={{
-									background: theme.colors.primary
+											<Row css={{ flexDirection: "column", flex: 1 }}>
+												<Text color="default">{n.msg}</Text>
+												<Text color="error" size="0.7rem">
+													<Moment fromNow>{n.createdAt}</Moment>
+												</Text>
+											</Row>
+											<RiDeleteBack2Line
+												onClick={() => dispatch(deleteNotification(n._id))}
+												fontSize="1.5rem"
+											/>
+										</Row>
+									))
+								) : (
+									<Row justify="center">
+										<Text color="default" size="1rem">
+											No notifications 🔔
+										</Text>
+									</Row>
+								)}
+							</Grid.Container>
+						}
+						rounded
+						trigger="click"
+						onVisibleChange={visible => {
+							visible &&
+								unreadNotifications > 0 &&
+								dispatch(setNotificationAsRead(notifications.map(n => n._id)));
+						}}
+						placement="bottomEnd"
+					>
+						<BellIcon>
+							{unreadNotifications > 0 && (
+								<div className="badge">{unreadNotifications}</div>
+							)}
+							<FaBell fontSize="1.6rem" color="#fff" />
+						</BellIcon>
+					</Tooltip>
+
+					{/* user avatar */}
+					<Tooltip
+						content={
+							<div
+								style={{
+									display: "flex",
+									flexDirection: "column",
+									gap: ".3rem"
 								}}
-								onClick={open}
-								auto
 							>
-								Sign In
-							</Button>
-						)}
-					</Right>
-				</Container>
-			</Wrapper>
-		</>
+								<Text h3 color="primary">
+									Following {user?.following?.length}
+								</Text>
+								<Text
+									css={{
+										whiteSpace: "nowrap"
+									}}
+									h3
+									color="error"
+								>
+									Followers {user?.followers?.length}
+								</Text>
+								<Button
+									onClick={() => {
+										dispatch(logout());
+										stopSocket();
+									}}
+									color="white"
+									css={{ color: "#000", borderRadius: 0 }}
+									auto
+								>
+									Log out
+								</Button>
+							</div>
+						}
+						trigger="click"
+						css={{ backgroundColor: "#fff", borderRadius: 3 }}
+						placement="bottomEnd"
+					>
+						<Avatar size="md" src={user.avatar} zoomed />
+					</Tooltip>
+				</Right>
+			</Container>
+		</Wrapper>
 	);
 };
 
@@ -304,4 +178,23 @@ export const CircleIndication = styled.div`
 	top: -4px;
 	border-radius: 50%;
 	background: #17c964;
+`;
+
+const BellIcon = styled.div`
+	display: flex;
+	position: relative;
+	.badge {
+		position: absolute;
+		right: -5px;
+		top: -5px;
+		background: #17c964;
+		width: 1.2rem;
+		border-radius: 50%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		font-size: 0.8rem;
+		font-weight: bold;
+		height: 1.2rem;
+	}
 `;

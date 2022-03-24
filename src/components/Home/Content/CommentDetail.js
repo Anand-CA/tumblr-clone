@@ -46,10 +46,6 @@ const CommentDetail = ({ c }) => {
 		dispatch(deletecomment(c._id));
 	};
 
-	const DislikeComment = () => {
-		dispatch(dislikeComment());
-	};
-
 	return (
 		<Wrapper>
 			<Left>

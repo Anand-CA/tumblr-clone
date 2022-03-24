@@ -48,17 +48,6 @@ function Post({ p }) {
 			setLikesCount(data.likesCount);
 		});
 
-		socket.on("like-notify", data => {
-			dispatch({
-				type: "OPEN_TOAST",
-				payload: {
-					show: true,
-					type: "warning",
-					message: data.msg
-				}
-			});
-		});
-
 		socket.on("comment-added", data => {
 			dispatch({
 				type: "ADD_COMMENT",
@@ -75,7 +64,6 @@ function Post({ p }) {
 
 		return () => {
 			socket.off("likesCount");
-			socket.off("like-notify");
 			socket.off("comment-added");
 			socket.off("comment-delete");
 		};
