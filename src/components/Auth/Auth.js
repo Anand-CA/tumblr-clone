@@ -1,16 +1,15 @@
-import styled from "styled-components";
-import React from "react";
 import { Row, Text } from "@nextui-org/react";
-import { FcGoogle } from "react-icons/fc";
+import { motion } from "framer-motion";
+import React from "react";
 import GoogleLogin from "react-google-login";
-import Signup from "./Signup";
-import { AnimateSharedLayout, motion } from "framer-motion";
-import Signin from "./Signin";
-import { startSocket } from "../../utils/socketio";
-import axios from "../../utils/axios";
+import { FcGoogle } from "react-icons/fc";
 import { useDispatch, useSelector } from "react-redux";
-import { googleAuth } from "../../redux/actions/auth";
+import styled from "styled-components";
 import LoadingScreen from "../../layout/Loading/LoadingScreen";
+import { googleAuth } from "../../redux/actions/auth";
+import Signin from "./Signin";
+import Signup from "./Signup";
+import Image from "next/image";
 
 export default function Auth() {
 	const dispatch = useDispatch();
@@ -30,7 +29,13 @@ export default function Auth() {
 	return (
 		<Wrapper>
 			<Container>
-				<img src="/tumblr-text.svg" alt="" />
+				<Image
+					src="/tumblr-text.svg"
+					alt="tumblr logo"
+					width={200}
+					height={80}
+					layout="responsive"
+				/>
 				{active === "signin" && <Signin />}
 				<h2>Make stuff, look at stuff, talk about stuff, find your people.</h2>
 
